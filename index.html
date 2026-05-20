@@ -1,0 +1,2305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSU · Ed.D. Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --garnet: #782F40;
+  --garnet-dark: #5a1f2e;
+  --garnet-light: #a84458;
+  --garnet-pale: #f9edef;
+  --gold: #CEB888;
+  --gold-dark: #b8a070;
+  --gold-light: #e8d9b4;
+  --bg: #F4F1ED;
+  --surface: #ffffff;
+  --surface2: #ede9e3;
+  --border: #d4cfc8;
+  --text: #1e1c18;
+  --text2: #5a5750;
+  --text3: #8a8780;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 1px 3px rgba(120,47,64,0.08);
+  --shadow-md: 0 4px 12px rgba(120,47,64,0.12);
+  --nav-h: 60px;
+}
+[data-theme="dark"] {
+  --bg: #0f0f11;
+  --surface: #1a1a1f;
+  --surface2: #222228;
+  --border: #32323c;
+  --text: #f0f0f4;
+  --text2: #a8a8b8;
+  --text3: #66667a;
+  --garnet-pale: #2a1020;
+  --gold-light: #2a2410;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.6);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; transition: background .2s, color .2s; }
+
+/* ── TOP NAV ── */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+  background: var(--garnet-dark);
+  display: flex; align-items: center; padding: 0 20px;
+  z-index: 200; gap: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+.topnav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.topnav-logo { width: 32px; height: 32px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.topnav-logo i { font-size: 17px; color: var(--garnet-dark); }
+.topnav-title { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -.2px; }
+.topnav-title span { color: var(--gold); }
+.topnav-links { display: flex; align-items: center; gap: 2px; margin-left: 24px; flex: 1; }
+.topnav-links a {
+  padding: 6px 12px; border-radius: 8px; color: rgba(255,255,255,0.7);
+  text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px;
+  transition: background .15s, color .15s; white-space: nowrap;
+}
+.topnav-links a:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.topnav-links a.active { background: rgba(206,184,136,0.2); color: var(--gold); }
+.topnav-links a i { font-size: 16px; }
+.topnav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.dark-btn {
+  width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  transition: background .15s;
+}
+.dark-btn:hover { background: rgba(255,255,255,0.18); }
+.hamburger {
+  display: none; width: 36px; height: 36px; border-radius: 8px; border: none;
+  cursor: pointer; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+  align-items: center; justify-content: center; font-size: 20px;
+}
+
+/* ── DRAWER ── */
+.drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; }
+.drawer-overlay.open { display: block; }
+.drawer {
+  position: fixed; top: 0; left: -280px; bottom: 0; width: 260px;
+  background: var(--garnet-dark); z-index: 310; transition: left .25s cubic-bezier(.19,1,.22,1);
+  display: flex; flex-direction: column; padding: 20px 0;
+}
+.drawer.open { left: 0; }
+.drawer-close { margin: 0 16px 16px; align-self: flex-start; width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer; background: rgba(255,255,255,0.1); color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+.drawer-links a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: rgba(255,255,255,0.75); text-decoration: none; font-size: 14px; font-weight: 500; transition: background .12s; }
+.drawer-links a:hover, .drawer-links a.active { background: rgba(255,255,255,0.1); color: #fff; }
+.drawer-links a.active { color: var(--gold); }
+.drawer-links a i { font-size: 18px; }
+.drawer-sep { height: 1px; background: rgba(255,255,255,0.08); margin: 10px 20px; }
+.drawer-dark { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 500; }
+.toggle-switch { position: relative; width: 40px; height: 22px; margin-left: auto; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-track { position: absolute; inset: 0; border-radius: 11px; background: rgba(255,255,255,0.2); cursor: pointer; transition: background .2s; }
+.toggle-track:before { content:''; position: absolute; height: 16px; width: 16px; left: 3px; top: 3px; border-radius: 50%; background: #fff; transition: transform .2s; }
+input:checked + .toggle-track { background: var(--gold); }
+input:checked + .toggle-track:before { transform: translateX(18px); }
+
+/* ── MAIN ── */
+.main { margin-top: var(--nav-h); padding: 28px 32px 100px; width: 100%; }
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 22px; font-weight: 700; color: var(--text); }
+.page-header p { color: var(--text2); font-size: 13px; margin-top: 2px; }
+
+/* ── CARDS ── */
+.card { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 20px; box-shadow: var(--shadow-sm); }
+.card + .card { margin-top: 16px; }
+
+/* ── STAT GRID ── */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.stat-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; box-shadow: var(--shadow-sm); }
+.stat-num { font-size: 32px; font-weight: 800; color: var(--garnet); line-height: 1.1; }
+.stat-label { font-size: 12px; color: var(--text2); font-weight: 500; margin-top: 4px; }
+[data-theme="dark"] .stat-num { color: var(--gold); }
+
+/* ── COURSE GRID ── */
+.course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.course-card { border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow-md); border: none; position: relative; overflow: hidden; }
+.course-card.c-garnet { background: linear-gradient(135deg, #8b1a2e 0%, #c2334f 100%); border: 2px solid #a0243f; }
+.course-card.c-gold   { background: linear-gradient(135deg, #7a5200 0%, #c48a00 100%); border: 2px solid #a06a00; }
+.course-card.c-blue   { background: linear-gradient(135deg, #0d3a80 0%, #1e62c2 100%); border: 2px solid #1450a8; }
+[data-theme="dark"] .course-card.c-garnet { background: linear-gradient(135deg, #6b1020 0%, #a82840 100%); border-color: #c03050; }
+[data-theme="dark"] .course-card.c-gold   { background: linear-gradient(135deg, #5a3a00 0%, #9a7000 100%); border-color: #b88000; }
+[data-theme="dark"] .course-card.c-blue   { background: linear-gradient(135deg, #0a2860 0%, #1848a0 100%); border-color: #2060c8; }
+.course-card .course-code { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+.course-card .course-name { font-size: 15px; font-weight: 700; color: #fff; margin: 6px 0 14px; line-height: 1.3; }
+.course-card .course-meta { font-size: 12px; color: rgba(255,255,255,0.85); display: flex; flex-direction: column; gap: 5px; }
+.course-card .course-meta i { font-size: 13px; vertical-align: middle; margin-right: 5px; opacity: .8; }
+.course-card .course-meta a { color: rgba(255,255,255,0.85); text-decoration: underline; text-decoration-color: rgba(255,255,255,0.3); }
+.course-card .course-meta a:hover { color: #fff; }
+.course-progress { margin-top: 14px; }
+.course-progress-bar { height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+.course-progress-fill { height: 100%; background: rgba(255,255,255,0.7); border-radius: 2px; transition: width .4s; }
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* ── SECTION TITLE ── */
+.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-title i { font-size: 16px; }
+
+/* ── DEADLINE LIST ── */
+.deadline-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.deadline-item:last-child { border-bottom: none; }
+.dl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--garnet); }
+.dl-dot.soon { background: #f59e0b; }
+.dl-dot.overdue { background: #ef4444; }
+.dl-dot.ok { background: #22c55e; }
+.dl-name { flex: 1; font-size: 13px; color: var(--text); font-weight: 500; }
+.dl-meta { font-size: 11px; color: var(--text3); }
+.dl-course-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--garnet-pale); color: var(--garnet); margin-left: 6px; }
+[data-theme="dark"] .dl-course-tag { background: rgba(206,184,136,0.15); color: var(--gold); }
+
+/* ── TABLES ── */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text3); padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+.tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--surface2); }
+.completed-row td { opacity: .5; }
+.completed-row td .dl-name { text-decoration: line-through; }
+
+/* ── CHECK CIRCLE ── */
+.check-circle {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .15s; flex-shrink: 0; background: var(--surface);
+}
+.check-circle:hover { border-color: var(--garnet); }
+.check-circle.done { background: var(--garnet); border-color: var(--garnet); }
+.check-circle.done.cc-garnet { background: #c2334f; border-color: #c2334f; }
+.check-circle.done.cc-gold   { background: #c48a00; border-color: #c48a00; }
+.check-circle.done.cc-blue   { background: #1e62c2; border-color: #1e62c2; }
+.check-circle.done::after { content: ''; width: 5px; height: 9px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translate(-1px,-1px); display: block; }
+[data-theme="dark"] .check-circle.done { background: var(--gold-dark); border-color: var(--gold-dark); }
+
+/* ── TAGS ── */
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+.tag-garnet { background: #f5dde2; color: #7a1830; font-weight: 700; border: 1.5px solid #c2334f; }
+.tag-gold   { background: #fdf0d0; color: #7a4800; font-weight: 700; border: 1.5px solid #c48a00; }
+.tag-blue   { background: #daeafc; color: #0d3a80; font-weight: 700; border: 1.5px solid #1e62c2; }
+.tag-green { background: #e8f5e4; color: #2e6e20; }
+.tag-gray { background: var(--surface2); color: var(--text2); }
+[data-theme="dark"] .tag-garnet { background: rgba(139,26,46,0.3); color: #ff9aaa; border: 1.5px solid #c2334f; }
+[data-theme="dark"] .tag-gold   { background: rgba(196,138,0,0.2);  color: #ffc840; border: 1.5px solid #c48a00; }
+[data-theme="dark"] .tag-blue   { background: rgba(30,98,194,0.25); color: #7ab8ff; border: 1.5px solid #1e62c2; }
+[data-theme="dark"] .tag-green { background: rgba(30,120,30,0.35); color: #80e880; }
+[data-theme="dark"] .tag-gray { background: var(--surface2); color: var(--text2); }
+
+/* ── FILTER BAR ── */
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.filter-btn { padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; font-family: 'Poppins', sans-serif; }
+.filter-btn:hover { border-color: var(--garnet); color: var(--garnet); }
+.filter-btn.active { background: var(--garnet); border-color: var(--garnet); color: #fff; }
+[data-theme="dark"] .filter-btn.active { background: var(--gold-dark); border-color: var(--gold-dark); color: var(--garnet-dark); }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; transition: all .15s; }
+.btn-primary { background: var(--garnet); color: #fff; }
+.btn-primary:hover { background: var(--garnet-light); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1.5px solid var(--border); }
+.btn-secondary:hover { border-color: var(--garnet); color: var(--garnet); }
+.btn-gold { background: var(--gold); color: var(--garnet-dark); }
+.btn-gold:hover { background: var(--gold-dark); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-icon { padding: 6px; }
+
+/* ── FORM ELEMENTS ── */
+input, textarea, select {
+  font-family: 'Poppins', sans-serif; font-size: 13px;
+  background: var(--surface); color: var(--text);
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 8px 12px; width: 100%;
+  transition: border-color .15s;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--garnet); }
+[data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select { background: var(--surface2); }
+.form-row { display: grid; gap: 12px; margin-bottom: 12px; }
+.form-row.cols2 { grid-template-columns: 1fr 1fr; }
+.form-row.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; margin-bottom: 4px; }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 400; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border-radius: var(--radius-lg); padding: 28px; width: 100%; max-width: 520px; box-shadow: var(--shadow-md); max-height: 90vh; overflow-y: auto; }
+.modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ── PROGRESS BARS ── */
+.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--garnet); border-radius: 3px; transition: width .4s; }
+[data-theme="dark"] .progress-fill { background: var(--gold-dark); }
+
+/* ── WEEK CARD ── */
+.week-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+.week-card.current-week { border-color: var(--garnet); box-shadow: 0 0 0 2px rgba(120,47,64,0.15); }
+[data-theme="dark"] .week-card.current-week { border-color: var(--gold-dark); }
+.week-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text3); }
+.week-label { font-size: 15px; font-weight: 600; color: var(--text); margin: 2px 0 6px; }
+.week-dates { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+.week-mins { font-size: 12px; font-weight: 600; color: var(--garnet); margin-bottom: 8px; }
+[data-theme="dark"] .week-mins { color: var(--gold); }
+.week-deadlines { font-size: 12px; color: var(--text2); }
+.week-dl-item { display: flex; align-items: flex-start; gap: 6px; padding: 3px 0; }
+.week-dl-item i { font-size: 13px; color: var(--garnet); flex-shrink: 0; margin-top: 1px; }
+[data-theme="dark"] .week-dl-item i { color: var(--gold); }
+
+/* ── TODAY CARD ── */
+.today-section { margin-bottom: 24px; }
+.today-hero { background: linear-gradient(135deg, var(--garnet-dark) 0%, var(--garnet) 100%); border-radius: var(--radius-lg); padding: 24px; color: #fff; margin-bottom: 16px; }
+.today-hero h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.today-hero p { font-size: 13px; opacity: .8; }
+.focus-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--surface); border-radius: var(--radius-md); margin-bottom: 8px; border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
+.focus-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.focus-icon.red    { background: #dc2626; color: #fff; }
+.focus-icon.amber  { background: #d97706; color: #fff; }
+.focus-icon.blue   { background: #2563eb; color: #fff; }
+.focus-icon.green  { background: #16a34a; color: #fff; }
+.focus-icon.purple { background: #7c3aed; color: #fff; }
+[data-theme="dark"] .focus-icon.red    { background: #b91c1c; }
+[data-theme="dark"] .focus-icon.amber  { background: #b45309; }
+[data-theme="dark"] .focus-icon.blue   { background: #1d4ed8; }
+[data-theme="dark"] .focus-icon.green  { background: #15803d; }
+[data-theme="dark"] .focus-icon.purple { background: #6d28d9; }
+.focus-icon i { font-size: 17px; }
+.focus-content { flex: 1; }
+.focus-content strong { font-size: 13px; font-weight: 700; color: var(--text); display: block; }
+.focus-content span { font-size: 12px; color: var(--text2); margin-top: 1px; display: block; }
+
+/* ── DISCUSSION TRACKER ── */
+.disc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.disc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+.disc-week-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.disc-week-label { font-size: 14px; font-weight: 600; color: var(--text); }
+.disc-deadline { font-size: 11px; color: var(--text3); }
+.disc-dots { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.disc-dot-btn { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text3); display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.disc-dot-btn.filled { background: var(--garnet); border-color: var(--garnet); color: #fff; }
+[data-theme="dark"] .disc-dot-btn.filled { background: var(--gold-dark); border-color: var(--gold-dark); color: var(--garnet-dark); }
+.disc-status { font-size: 12px; font-weight: 600; }
+.disc-status.good { color: #22c55e; }
+.disc-status.warn { color: #f59e0b; }
+.disc-status.miss { color: #ef4444; }
+.disc-token { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.disc-dropped { font-size: 11px; color: var(--text3); font-style: italic; }
+
+/* ── NOTES ── */
+.notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.note-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; cursor: pointer; transition: box-shadow .15s; border-top: 3px solid var(--border); }
+.note-card:hover { box-shadow: var(--shadow-md); }
+.note-card.note-garnet { border-top-color: #c2334f; }
+.note-card.note-gold   { border-top-color: #c48a00; }
+.note-card.note-blue   { border-top-color: #1e62c2; }
+.note-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.note-body { font-size: 12px; color: var(--text2); margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.note-footer { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.note-date { font-size: 11px; color: var(--text3); margin-left: auto; }
+
+/* ── MILESTONE ── */
+.milestone-track { display: flex; flex-direction: column; gap: 12px; }
+.milestone-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; transition: border-color .15s; }
+.milestone-item:hover { border-color: var(--garnet); }
+.milestone-item.done { opacity: .7; }
+.milestone-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--garnet-pale); color: var(--garnet); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.milestone-item.done .milestone-icon { background: #dcfce7; color: #16a34a; }
+[data-theme="dark"] .milestone-icon { background: rgba(120,47,64,0.3); color: var(--gold); }
+.milestone-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.milestone-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.milestone-date { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* ── READING ROW ── */
+.reading-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); border-radius: 6px; transition: background .12s; }
+.reading-row:last-child { border-bottom: none; }
+.reading-row:hover { background: var(--surface2); }
+.reading-text { flex: 1; }
+.reading-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.reading-citation { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.reading-week { font-size: 11px; color: var(--text2); }
+
+/* ── CONNECTIONS ── */
+.conn-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; }
+.conn-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.conn-courses { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.conn-desc { font-size: 13px; color: var(--text2); }
+
+/* ── APA BUILDER ── */
+.apa-output { background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 16px; font-size: 13px; color: var(--text); line-height: 1.8; min-height: 60px; word-break: break-word; }
+.apa-output em { font-style: italic; }
+
+/* ── GRADE TABLE ── */
+.grade-input { width: 80px; padding: 4px 8px; font-size: 13px; text-align: center; }
+.grade-avg { font-size: 16px; font-weight: 700; color: var(--garnet); }
+[data-theme="dark"] .grade-avg { color: var(--gold); }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--gray-800, #1e1d1a); color: #fff; padding: 10px 18px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500; opacity: 0; transform: translateY(12px); transition: all .2s; z-index: 500; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── CONNECTIONS CALLOUT ── */
+.callout { background: var(--gold-light); border-left: 4px solid var(--gold-dark); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--text); margin-bottom: 16px; }
+[data-theme="dark"] .callout { background: rgba(206,184,136,0.12); border-left-color: var(--gold); }
+
+/* ── SETUP SCREEN ── */
+.setup-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); padding: 20px; }
+.setup-card { background: var(--surface); border-radius: var(--radius-xl); padding: 40px; max-width: 440px; width: 100%; box-shadow: var(--shadow-md); text-align: center; }
+.setup-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.setup-card p { color: var(--text2); font-size: 13px; margin-bottom: 28px; }
+.setup-field { text-align: left; margin-bottom: 14px; }
+
+/* ── EXPORT ── */
+.export-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+.export-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0; }
+.export-stat { text-align: center; }
+.export-stat-num { font-size: 32px; font-weight: 700; color: var(--garnet); }
+[data-theme="dark"] .export-stat-num { color: var(--gold); }
+.export-stat-label { font-size: 12px; color: var(--text2); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .topnav-links { display: none; }
+  .hamburger { display: flex; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .course-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .three-col { grid-template-columns: 1fr; }
+  .export-grid { grid-template-columns: 1fr 1fr; }
+  .form-row.cols2 { grid-template-columns: 1fr; }
+  .form-row.cols3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .main { padding: 16px 14px 60px; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .tbl .hide-mobile { display: none; }
+  .export-grid { grid-template-columns: 1fr; }
+}
+@media print {
+  .topnav, .filter-bar, .btn, .hamburger, .dark-btn { display: none !important; }
+  .main { margin: 0; padding: 20px; }
+  .page { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN (shown until connected) -->
+<div id="setupScreen" class="setup-screen" style="display:none">
+  <div class="setup-card">
+    <div style="width:52px;height:52px;background:var(--garnet);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+      <i class="ti ti-school" style="font-size:26px;color:#fff"></i>
+    </div>
+    <h1>FSU Ed.D. Dashboard</h1>
+    <p>Connect your Supabase database to get started. See the README for setup instructions.</p>
+    <div class="setup-field">
+      <label>Supabase Project URL</label>
+      <input type="text" id="sbUrl" placeholder="https://xxxx.supabase.co">
+    </div>
+    <div class="setup-field">
+      <label>Supabase Anon Key</label>
+      <input type="password" id="sbKey" placeholder="eyJhbG...">
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="connectSupabase()">
+      <i class="ti ti-plug"></i> Connect &amp; Launch
+    </button>
+    <p style="margin-top:14px;font-size:11px;color:var(--text3)">Credentials are saved in localStorage on this device only.</p>
+  </div>
+</div>
+
+<!-- TOP NAV -->
+<nav class="topnav" id="topnav" style="display:none">
+  <button class="hamburger" id="hamburgerBtn" onclick="openDrawer()"><i class="ti ti-menu-2"></i></button>
+  <a class="topnav-brand" href="#">
+    <div class="topnav-logo"><i class="ti ti-school"></i></div>
+    <span class="topnav-title">FSU <span>Ed.D.</span></span>
+  </a>
+  <div class="topnav-links" id="topnavLinks">
+    <a href="#" onclick="nav('today')" id="nav-today"><i class="ti ti-sun"></i> Today</a>
+    <a href="#" onclick="nav('dashboard')" id="nav-dashboard"><i class="ti ti-dashboard"></i> Overview</a>
+    <a href="#" onclick="nav('assignments')" id="nav-assignments"><i class="ti ti-checkbox"></i> Assignments</a>
+    <a href="#" onclick="nav('readings')" id="nav-readings"><i class="ti ti-books"></i> Readings</a>
+    <a href="#" onclick="nav('timeline')" id="nav-timeline"><i class="ti ti-calendar"></i> Timeline</a>
+    <a href="#" onclick="nav('notes')" id="nav-notes"><i class="ti ti-notes"></i> Notes</a>
+    <a href="#" onclick="nav('apa')" id="nav-apa"><i class="ti ti-quote"></i> APA</a>
+    <a href="#" onclick="nav('dissertation')" id="nav-dissertation"><i class="ti ti-certificate"></i> Diss.</a>
+    <a href="#" onclick="nav('export')" id="nav-export"><i class="ti ti-file-export"></i> Export</a>
+  </div>
+  <div class="topnav-right">
+    <button class="dark-btn" onclick="toggleDarkMode()" id="darkBtn" title="Toggle dark mode"><i class="ti ti-moon"></i></button>
+  </div>
+</nav>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <button class="drawer-close" onclick="closeDrawer()"><i class="ti ti-x"></i></button>
+  <div class="drawer-links" id="drawerLinks">
+    <a href="#" onclick="nav('today');closeDrawer()"><i class="ti ti-sun"></i> Today</a>
+    <a href="#" onclick="nav('dashboard');closeDrawer()"><i class="ti ti-dashboard"></i> Overview</a>
+    <a href="#" onclick="nav('assignments');closeDrawer()"><i class="ti ti-checkbox"></i> Assignments</a>
+    <a href="#" onclick="nav('readings');closeDrawer()"><i class="ti ti-books"></i> Readings</a>
+    <a href="#" onclick="nav('timeline');closeDrawer()"><i class="ti ti-calendar"></i> Timeline</a>
+    <a href="#" onclick="nav('notes');closeDrawer()"><i class="ti ti-notes"></i> Notes</a>
+    <a href="#" onclick="nav('apa');closeDrawer()"><i class="ti ti-quote"></i> APA Builder</a>
+    <a href="#" onclick="nav('dissertation');closeDrawer()"><i class="ti ti-certificate"></i> Dissertation</a>
+    <a href="#" onclick="nav('export');closeDrawer()"><i class="ti ti-file-export"></i> Export</a>
+  </div>
+  <div class="drawer-sep"></div>
+  <div class="drawer-dark">
+    <i class="ti ti-moon" style="font-size:16px;color:rgba(255,255,255,0.6)"></i>
+    <span>Dark mode</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="darkToggleDrawer" onchange="toggleDarkMode()">
+      <span class="toggle-track"></span>
+    </label>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="mainContent" style="display:none">
+
+  <!-- TODAY PAGE -->
+  <div class="page" id="page-today">
+    <div class="today-hero">
+      <h2 id="todayGreeting">Good morning!</h2>
+      <p id="todaySubtitle">Here's what needs your attention today.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="section-title"><i class="ti ti-alert-circle"></i> Action Items</div>
+        <div id="todayActions"></div>
+      </div>
+      <div>
+        <div class="section-title"><i class="ti ti-book-open"></i> Suggested Reading</div>
+        <div id="todayReadings"></div>
+        <div class="section-title" style="margin-top:20px"><i class="ti ti-clock"></i> Reading Estimate</div>
+        <div id="todayReadEst" class="card" style="padding:14px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD / OVERVIEW PAGE -->
+  <div class="page" id="page-dashboard">
+    <div class="page-header">
+      <h1>Overview</h1>
+      <p id="semesterLabel">Summer 2026</p>
+    </div>
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="course-grid" id="courseGrid"></div>
+    <div class="two-col">
+      <div>
+        <div class="section-title"><i class="ti ti-clock"></i> Upcoming Deadlines</div>
+        <div class="card" id="upcomingDeadlines"></div>
+      </div>
+      <div>
+        <div class="section-title"><i class="ti ti-link"></i> Cross-Course Connections</div>
+        <div id="connectionsShort"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSIGNMENTS PAGE -->
+  <div class="page" id="page-assignments">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div><h1>Assignments</h1><p>Track all coursework across every semester</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAddAssignment()"><i class="ti ti-plus"></i> Add Assignment</button>
+    </div>
+    <div class="filter-bar" id="assignFilter"></div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="tbl" id="assignTable">
+        <thead><tr>
+          <th style="width:36px"></th>
+          <th>Assignment</th>
+          <th class="hide-mobile">Course</th>
+          <th class="hide-mobile">Due</th>
+          <th class="hide-mobile">Weight</th>
+          <th style="width:60px"></th>
+        </tr></thead>
+        <tbody id="assignBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- READINGS PAGE -->
+  <div class="page" id="page-readings">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div><h1>Readings</h1><p id="readProgress">Track your reading list</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="syncMissingReadings()"><i class="ti ti-refresh"></i> Sync from syllabus</button>
+        <button class="btn btn-gold btn-sm" onclick="openImportReadings()"><i class="ti ti-clipboard-text"></i> Import from Canvas</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddReading()"><i class="ti ti-plus"></i> Add Reading</button>
+      </div>
+    </div>
+    <div class="filter-bar" id="readFilter"></div>
+    <div class="card" style="padding:16px" id="readingList"></div>
+  </div>
+
+  <!-- TIMELINE PAGE -->
+  <div class="page" id="page-timeline">
+    <div class="page-header"><h1>Semester Timeline</h1><p>Weekly workload with daily reading estimates</p></div>
+    <div id="timelineGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px"></div>
+  </div>
+
+  <!-- NOTES PAGE -->
+  <div class="page" id="page-notes">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div><h1>Research Notes</h1><p>Your running journal — tagged, searchable, forever</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAddNote()"><i class="ti ti-plus"></i> New Note</button>
+    </div>
+    <div class="filter-bar" id="noteFilter"></div>
+    <div style="margin-bottom:14px">
+      <input type="text" id="noteSearch" placeholder="Search notes…" oninput="renderNotes()" style="max-width:320px">
+    </div>
+    <div class="notes-grid" id="notesGrid"></div>
+  </div>
+
+  <!-- APA BUILDER PAGE -->
+  <div class="page" id="page-apa">
+    <div class="page-header"><h1>APA Reference Builder</h1><p>7th edition — build a citation by filling in the fields</p></div>
+    <div class="two-col">
+      <div class="card">
+        <div class="section-title"><i class="ti ti-forms"></i> Reference Details</div>
+        <div class="form-row">
+          <div>
+            <label>Reference Type</label>
+            <select id="apaType" onchange="buildApa()">
+              <option value="journal">Journal Article</option>
+              <option value="book">Book</option>
+              <option value="chapter">Book Chapter</option>
+              <option value="website">Website / Web Document</option>
+              <option value="dissertation">Dissertation / Thesis</option>
+              <option value="report">Report / Technical Report</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div><label>Author(s) <span style="font-weight:400;color:var(--text3)">(Last, F. M. — one per line)</span></label>
+          <textarea id="apaAuthors" rows="3" placeholder="Staudt Willet, K. B.&#10;Dennen, V. P." oninput="buildApa()"></textarea></div>
+        </div>
+        <div class="form-row cols2">
+          <div><label>Year</label><input type="text" id="apaYear" placeholder="2024" oninput="buildApa()"></div>
+          <div id="apaVolumeWrap"><label>Volume</label><input type="text" id="apaVolume" placeholder="12" oninput="buildApa()"></div>
+        </div>
+        <div class="form-row">
+          <div><label>Title of Article / Chapter / Book</label><input type="text" id="apaTitle" placeholder="Title of the work" oninput="buildApa()"></div>
+        </div>
+        <div id="apaJournalFields">
+          <div class="form-row cols2">
+            <div><label>Journal Name</label><input type="text" id="apaJournal" placeholder="Journal of Learning Design" oninput="buildApa()"></div>
+            <div><label>Issue</label><input type="text" id="apaIssue" placeholder="3" oninput="buildApa()"></div>
+          </div>
+          <div class="form-row cols2">
+            <div><label>Pages</label><input type="text" id="apaPages" placeholder="45–67" oninput="buildApa()"></div>
+            <div><label>DOI / URL</label><input type="text" id="apaDoi" placeholder="https://doi.org/..." oninput="buildApa()"></div>
+          </div>
+        </div>
+        <div id="apaBookFields" style="display:none">
+          <div class="form-row cols2">
+            <div><label>Publisher</label><input type="text" id="apaPublisher" placeholder="Routledge" oninput="buildApa()"></div>
+            <div><label>Edition</label><input type="text" id="apaEdition" placeholder="3rd" oninput="buildApa()"></div>
+          </div>
+          <div class="form-row">
+            <div><label>DOI / URL (if available)</label><input type="text" id="apaBookDoi" placeholder="https://doi.org/..." oninput="buildApa()"></div>
+          </div>
+        </div>
+        <div id="apaChapterFields" style="display:none">
+          <div class="form-row">
+            <div><label>Chapter Title</label><input type="text" id="apaChapterTitle" placeholder="Chapter title" oninput="buildApa()"></div>
+          </div>
+          <div class="form-row">
+            <div><label>Book Editor(s)</label><input type="text" id="apaEditors" placeholder="Smith, J. A." oninput="buildApa()"></div>
+          </div>
+          <div class="form-row cols2">
+            <div><label>Book Title</label><input type="text" id="apaBookTitle" placeholder="Book title" oninput="buildApa()"></div>
+            <div><label>Pages in Book</label><input type="text" id="apaChapPages" placeholder="pp. 45–67" oninput="buildApa()"></div>
+          </div>
+          <div class="form-row">
+            <div><label>Publisher</label><input type="text" id="apaChapPublisher" placeholder="Publisher name" oninput="buildApa()"></div>
+          </div>
+        </div>
+        <div id="apaWebFields" style="display:none">
+          <div class="form-row">
+            <div><label>Site / Organization Name</label><input type="text" id="apaSite" placeholder="Org name" oninput="buildApa()"></div>
+          </div>
+          <div class="form-row">
+            <div><label>URL</label><input type="text" id="apaUrl" placeholder="https://..." oninput="buildApa()"></div>
+          </div>
+        </div>
+        <div id="apaDisserFields" style="display:none">
+          <div class="form-row cols2">
+            <div><label>Institution</label><input type="text" id="apaInstitution" placeholder="Florida State University" oninput="buildApa()"></div>
+            <div><label>Database / URL</label><input type="text" id="apaDisserUrl" placeholder="ProQuest Dissertations" oninput="buildApa()"></div>
+          </div>
+        </div>
+        <div id="apaReportFields" style="display:none">
+          <div class="form-row cols2">
+            <div><label>Institution / Publisher</label><input type="text" id="apaReportInst" placeholder="RAND Corporation" oninput="buildApa()"></div>
+            <div><label>Report Number</label><input type="text" id="apaReportNum" placeholder="RR-2019" oninput="buildApa()"></div>
+          </div>
+          <div class="form-row">
+            <div><label>URL</label><input type="text" id="apaReportUrl" placeholder="https://..." oninput="buildApa()"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-primary btn-sm" onclick="copyApa()"><i class="ti ti-copy"></i> Copy Citation</button>
+          <button class="btn btn-secondary btn-sm" onclick="clearApa()"><i class="ti ti-trash"></i> Clear</button>
+          <button class="btn btn-gold btn-sm" onclick="saveApaToNotes()"><i class="ti ti-notes"></i> Save to Notes</button>
+        </div>
+      </div>
+      <div>
+        <div class="section-title"><i class="ti ti-eye"></i> Preview</div>
+        <div class="apa-output" id="apaOutput">Fill in the fields to generate your citation…</div>
+        <div class="section-title" style="margin-top:20px"><i class="ti ti-clock"></i> Quick Tips</div>
+        <div class="card" style="font-size:12px;color:var(--text2);line-height:1.8">
+          <p><strong>Author format:</strong> Last, F. M. (or Last, F. M., &amp; Other, A. B. for two)</p>
+          <p style="margin-top:6px"><strong>Italics:</strong> Journal names, book/report titles are italicized in APA 7</p>
+          <p style="margin-top:6px"><strong>DOIs:</strong> Always use https://doi.org/ format</p>
+          <p style="margin-top:6px"><strong>7 or more authors:</strong> List first six, then … Last Author</p>
+          <p style="margin-top:6px"><strong>No date:</strong> Use (n.d.) for year</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISSERTATION PAGE -->
+  <div class="page" id="page-dissertation">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div><h1>Dissertation Progress</h1><p>Your 3-year arc from cohort to degree</p></div>
+      <button class="btn btn-secondary btn-sm" onclick="loadDefaultMilestones()"><i class="ti ti-template"></i> Load defaults</button>
+    </div>
+    <div class="milestone-track" id="milestoneTrack"></div>
+  </div>
+
+  <!-- EXPORT PAGE -->
+  <div class="page" id="page-export">
+    <div class="page-header"><h1>Progress Export</h1><p>Download a semester summary PDF</p></div>
+    <div class="card" style="max-width:640px">
+      <h2 id="exportTitle" style="font-size:18px;font-weight:700;margin-bottom:4px"></h2>
+      <p id="exportSubtitle" style="font-size:13px;color:var(--text2);margin-bottom:20px"></p>
+      <div class="export-grid" id="exportStats"></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
+      <div id="exportCourses"></div>
+      <div style="margin-top:24px">
+        <button class="btn btn-primary" onclick="downloadExportPDF()"><i class="ti ti-download"></i> Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modalAssignment">
+  <div class="modal">
+    <h2 id="assignModalTitle">Add Assignment</h2>
+    <input type="hidden" id="editAssignId">
+    <div class="form-row"><div><label>Assignment Name</label><input type="text" id="assignName" placeholder="Research proposal draft"></div></div>
+    <div class="form-row cols2">
+      <div><label>Course</label><select id="assignCourse"></select></div>
+      <div><label>Type</label>
+        <select id="assignType">
+          <option>Assignment</option><option>Discussion</option><option>Quiz</option><option>Exam</option><option>Project</option><option>Presentation</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row cols2">
+      <div><label>Due Date</label><input type="date" id="assignDue"></div>
+      <div><label>Weight (%)</label><input type="number" id="assignWeight" placeholder="20"></div>
+    </div>
+    <div class="form-row"><div><label>Notes (optional)</label><textarea id="assignNotes" rows="2"></textarea></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modalAssignment')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAssignment()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalReading">
+  <div class="modal">
+    <h2 id="readModalTitle">Add Reading</h2>
+    <input type="hidden" id="editReadId">
+    <div class="form-row"><div><label>Title</label><input type="text" id="readTitle" placeholder="Article or book title"></div></div>
+    <div class="form-row"><div><label>Citation / Author(s)</label><input type="text" id="readCitation" placeholder="Author, A. (2024). Title. Journal, 12(3), 45–67."></div></div>
+    <div class="form-row cols2">
+      <div><label>Course</label><select id="readCourse"></select></div>
+      <div><label>Week / Module</label><input type="text" id="readWeek" placeholder="Week 3"></div>
+    </div>
+    <div class="form-row"><div><label>URL (optional)</label><input type="url" id="readUrl" placeholder="https://..."></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modalReading')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveReading()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalNote">
+  <div class="modal" style="max-width:640px">
+    <h2 id="noteModalTitle">New Note</h2>
+    <p id="noteModalTime" style="font-size:11px;color:var(--text3);margin-top:-14px;margin-bottom:16px"></p>
+    <input type="hidden" id="editNoteId">
+    <div class="form-row"><div><label>Title</label><input type="text" id="noteTitle" placeholder="Note title"></div></div>
+    <div class="form-row cols2">
+      <div><label>Course (optional)</label><select id="noteCourse"><option value="">— No course —</option></select></div>
+      <div><label>Module / Week</label><select id="noteModule"><option value="">— Select —</option></select></div>
+    </div>
+    <div class="form-row"><div><label>Body</label><textarea id="noteBody" rows="8" placeholder="Your notes…"></textarea></div></div>
+    <div class="form-row"><div><label>Tags (comma-separated)</label><input type="text" id="noteTags" placeholder="cognition, proposal, week3"></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modalNote')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNote()">Save</button>
+    </div>
+  </div>
+</div>
+
+<button id="floatNoteBtn" onclick="openAddNote()" title="Add a note" style="
+  position:fixed; bottom:28px; right:28px; z-index:350;
+  width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
+  background:var(--garnet); color:#fff; font-size:22px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 16px rgba(120,47,64,0.45); transition:transform .15s, box-shadow .15s;
+" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
+  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/>
+    <line x1="16" y1="17" x2="8" y2="17"/>
+    <line x1="10" y1="9" x2="8" y2="9"/>
+  </svg>
+</button>
+<!-- IMPORT READINGS MODAL -->
+<div class="modal-overlay" id="modalImport">
+  <div class="modal" style="max-width:680px">
+    <h2>Import Readings from Canvas</h2>
+    <p style="font-size:13px;color:var(--text2);margin-top:-12px;margin-bottom:20px">Paste your reading list directly from Canvas. The importer will parse author, title, journal, and DOI/URL automatically.</p>
+
+    <!-- Step 1: Paste -->
+    <div id="importStep1">
+      <div class="form-row cols2">
+        <div>
+          <label>Course</label>
+          <select id="importCourse"></select>
+        </div>
+        <div>
+          <label>Module / Week label</label>
+          <input type="text" id="importWeekLabel" placeholder="e.g. Week 2 · Skim">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Paste reading list text from Canvas</label>
+          <textarea id="importText" rows="10" placeholder="Paste your Canvas readings here. Each citation on its own line or paragraph works best. Example:
+
+Bodily, R., Leary, H., & West, R. E. (2019). Research trends in instructional design and technology journals. British Journal of Educational Technology, 50(1), 64-79. doi:10.1111/bjet.12712
+
+Corrin, L., Thompson, K., Hwang, G. J., & Lodge, J. M. (2022). The importance of choosing the right keywords..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-secondary" onclick="closeModal('modalImport')">Cancel</button>
+        <button class="btn btn-primary" onclick="parseImport()"><i class="ti ti-wand"></i> Parse & Preview</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Preview & confirm -->
+    <div id="importStep2" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">Found <span id="importCount">0</span> readings — review before saving</div>
+        <button class="btn btn-secondary btn-sm" onclick="backToImportStep1()"><i class="ti ti-arrow-left"></i> Back</button>
+      </div>
+      <div id="importPreviewList" style="max-height:360px;overflow-y:auto;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:4px"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-secondary" onclick="closeModal('modalImport')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmImport()"><i class="ti ti-check"></i> Add All to Dashboard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ────────────────────────────────────────────────
+// CONFIG + STATE
+// ────────────────────────────────────────────────
+let SB_URL = '', SB_KEY = '';
+let courses = [], assignments = [], readings = [], notes = [], milestones = [], semesters = [];
+let discData = {}; // { weekKey: { posts: n, tokenUsed: bool } }
+let currentPage = 'today';
+let currentCourseFilter = 'all';
+let currentReadFilter = 'all';
+let currentNoteFilter = 'all';
+
+// ── SEED DATA ────────────────────────────────────
+const SEED = {
+  semester: { name: 'Summer 2026', term: 'Summer', year: 2026, start_date: '2026-05-12', end_date: '2026-08-01', is_current: true },
+  courses: [
+    { code: 'EDF 5492', name: 'Applied Research Methods', instructor: 'Staudt Willet, K. B.', email: 'kbstaudtwillet@fsu.edu', credits: 3, color: 'garnet' },
+    { code: 'EDG 6362', name: 'Instructional Systems Research Seminar', instructor: 'Dennen, V. P.', email: 'vdennen@fsu.edu', credits: 3, color: 'gold' },
+    { code: 'EME 6920', name: 'Learning Design & Perf. Tech. Colloquium', instructor: 'Dennen, V. P.', email: 'vdennen@fsu.edu', credits: 1, color: 'blue' }
+  ],
+  assignments: [
+    // EDF 5492 — Applied Research Methods
+    // Module 1 (thru May 24)
+    { course_code:'EDF 5492', name:'Module 1 Discussion: Research Problems', due_date:'2026-05-22', weight:5, type:'Discussion', notes:'50 pts' },
+    // Module 2: Research Design (May 25–June 7)
+    { course_code:'EDF 5492', name:'Module 2 Discussion: Research Design', due_date:'2026-06-05', weight:5, type:'Discussion', notes:'50 pts' },
+    { course_code:'EDF 5492', name:'Annotated Bibliography', due_date:'2026-06-07', weight:10, type:'Assignment', notes:'100 pts' },
+    // Module 3: Research Methods (June 8–21)
+    { course_code:'EDF 5492', name:'Module 3 Discussion: Research Methodologies', due_date:'2026-06-19', weight:5, type:'Discussion', notes:'50 pts' },
+    { course_code:'EDF 5492', name:'Proposal Outline', due_date:'2026-06-21', weight:5, type:'Assignment', notes:'50 pts' },
+    // Module 4: Data Collection (June 22–July 5)
+    { course_code:'EDF 5492', name:'Module 4 Discussion: Data Collection', due_date:'2026-07-03', weight:5, type:'Discussion', notes:'50 pts' },
+    { course_code:'EDF 5492', name:'Glossary', due_date:'2026-07-05', weight:10, type:'Assignment', notes:'100 pts' },
+    { course_code:'EDF 5492', name:'Proposal Draft', due_date:'2026-07-19', weight:10, type:'Project', notes:'100 pts' },
+    // Module 5: Data Analysis (July 6–19)
+    { course_code:'EDF 5492', name:'Module 5 Discussion: Data Analysis', due_date:'2026-07-17', weight:5, type:'Discussion', notes:'50 pts' },
+    { course_code:'EDF 5492', name:'Proposal Presentation', due_date:'2026-07-26', weight:10, type:'Presentation', notes:'100 pts' },
+    // Module 6: Research Ethics & Quality (July 20–31)
+    { course_code:'EDF 5492', name:'Module 6 Discussion: Research Ethics & Quality', due_date:'2026-07-31', weight:5, type:'Discussion', notes:'50 pts' },
+    { course_code:'EDF 5492', name:'Proposal Final Draft', due_date:'2026-07-31', weight:15, type:'Project', notes:'150 pts' },
+    // EDG 6362 — Instructional Systems Research Seminar
+    { course_code:'EDG 6362', name:'Module 1 Discussion: History and Overview of the Field', due_date:'2026-05-17', weight:10, type:'Discussion', notes:'Due May 17 at 11:59pm' },
+    { course_code:'EDG 6362', name:'Statement of Interests', due_date:'2026-05-17', weight:10, type:'Assignment', notes:'Due May 17 at 11:59pm' },
+    { course_code:'EDG 6362', name:'Baseline Essay & Comment', due_date:'2026-05-24', weight:10, type:'Assignment', notes:'Due May 24 at 11:59pm' },
+    { course_code:'EDG 6362', name:'Week 2 Discussion: Research as a Conversation', due_date:'2026-05-24', weight:10, type:'Discussion', notes:'Available May 18 · Due May 24 at 11:59pm' },
+    { course_code:'EDG 6362', name:'Research Conversation Activity - Presentation', due_date:'2026-05-31', weight:15, type:'Presentation', notes:'Due May 31 at 11:59pm' },
+    { course_code:'EDG 6362', name:'Research Conversation Activity - Annotated Bibliography', due_date:'2026-05-31', weight:15, type:'Assignment', notes:'Due May 31 at 11:59pm' },
+    { course_code:'EDG 6362', name:'Token 1', due_date:null, weight:0, type:'Assignment', notes:'Undated — flexibility token' },
+    // EME 6920
+    { course_code:'EME 6920', name:'Citation Management Setup', due_date:'2026-05-20', weight:10, type:'Assignment' },
+    { course_code:'EME 6920', name:'CITI Training Certificate', due_date:'2026-06-10', weight:20, type:'Assignment' },
+    { course_code:'EME 6920', name:'Research Ethics Reflection', due_date:'2026-06-24', weight:20, type:'Assignment' },
+    { course_code:'EME 6920', name:'Conference Presentation Review', due_date:'2026-07-15', weight:25, type:'Presentation' },
+    { course_code:'EME 6920', name:'Professional Org Participation', due_date:'2026-07-29', weight:25, type:'Assignment' }
+  ],
+  readings: [
+    // ── EDF 5492: Applied Research Methods ──
+    // Module 1 readings were already in Canvas before these screenshots; add via Sync button
+    // Module 2: Research Design (May 25–June 7)
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 5 Research Design', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 5). University of South Florida.', week_label:'Module 2 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 6 Measurement of Constructs', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 6). University of South Florida.', week_label:'Module 2 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 9 Survey Research', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 9). University of South Florida.', week_label:'Module 2 · Skim' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 10 Experimental Research', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 10). University of South Florida.', week_label:'Module 2 · Skim' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 11 Case Research', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 11). University of South Florida.', week_label:'Module 2 · Skim' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 12 Interpretive Research', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 12). University of South Florida.', week_label:'Module 2 · Skim' },
+    // Module 3: Research Methods (June 8–21)
+    { course_code:'EDF 5492', title:'Creswell & Creswell (2023)—Ch 8 Quantitative Methods', citation:'Creswell, J. W., & Creswell, J. D. (2023). Research design: Qualitative, quantitative, and mixed methods approaches (6th ed., Ch. 8). SAGE.', week_label:'Module 3 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Creswell & Creswell (2023)—Ch 9 Qualitative Methods', citation:'Creswell, J. W., & Creswell, J. D. (2023). Research design: Qualitative, quantitative, and mixed methods approaches (6th ed., Ch. 9). SAGE.', week_label:'Module 3 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Creswell & Creswell (2023)—Ch 10 Mixed Methods Procedures', citation:'Creswell, J. W., & Creswell, J. D. (2023). Research design: Qualitative, quantitative, and mixed methods approaches (6th ed., Ch. 10). SAGE.', week_label:'Module 3 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Efron & Ravid (2020)—Ch 3 Approaches to Action Research', citation:'Efron, S. E., & Ravid, R. (2020). Action research in education: A practical guide (2nd ed., Ch. 3). Guilford Press.', week_label:'Module 3 · Skim' },
+    // Module 4: Data Collection (June 22–July 5)
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 8 Sampling', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 8). University of South Florida.', week_label:'Module 4 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Efron & Ravid (2020)—Ch 5 Data Collection Tools', citation:'Efron, S. E., & Ravid, R. (2020). Action research in education: A practical guide (2nd ed., Ch. 5). Guilford Press.', week_label:'Module 4 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Efron & Ravid (2020)—Ch 6 Using Assessment Data in Action Research', citation:'Efron, S. E., & Ravid, R. (2020). Action research in education: A practical guide (2nd ed., Ch. 6). Guilford Press.', week_label:'Module 4 · Skim' },
+    // Module 5: Data Analysis (July 6–19)
+    { course_code:'EDF 5492', title:'Efron & Ravid (2020)—Ch 7 Data Analysis and Interpretation', citation:'Efron, S. E., & Ravid, R. (2020). Action research in education: A practical guide (2nd ed., Ch. 7). Guilford Press.', week_label:'Module 5 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 13 Qualitative Data', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 13). University of South Florida.', week_label:'Module 5 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 14 Descriptive Data', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 14). University of South Florida.', week_label:'Module 5 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 15 Inferential Statistics', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 15). University of South Florida.', week_label:'Module 5 · Read Carefully' },
+    // Module 6: Research Ethics & Quality (July 20–31)
+    { course_code:'EDF 5492', title:'The Belmont Report: Ethical Principles and Guidelines for the Protection of Human Subjects of Research', citation:'National Commission for the Protection of Human Subjects of Biomedical and Behavioral Research. (1979). The Belmont Report. U.S. Department of Health and Human Services.', week_label:'Module 6 · Read Carefully', url:'https://www.hhs.gov/ohrp/regulations-and-policy/belmont-report/index.html' },
+    { course_code:'EDF 5492', title:'APA—Human Research Protections', citation:'American Psychological Association. (n.d.). Human research protections.', week_label:'Module 6 · Read Carefully', url:'https://www.apa.org/research/responsible/human-participants' },
+    { course_code:'EDF 5492', title:'Creswell & Creswell (2023)—Ch 4 Writing Strategies and Ethical Considerations', citation:'Creswell, J. W., & Creswell, J. D. (2023). Research design: Qualitative, quantitative, and mixed methods approaches (6th ed., Ch. 4). SAGE.', week_label:'Module 6 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Efron & Ravid (2020)—Ch 8 Writing, Implementing, and Sharing the Research Findings', citation:'Efron, S. E., & Ravid, R. (2020). Action research in education: A practical guide (2nd ed., Ch. 8). Guilford Press.', week_label:'Module 6 · Read Carefully' },
+    { course_code:'EDF 5492', title:'Bhattacherjee (2012)—Ch 7 Scale Reliability and Validity', citation:'Bhattacherjee, A. (2012). Social science research: Principles, methods, and practices (Ch. 7). University of South Florida.', week_label:'Module 6 · Skim' },
+
+    // ── EDG 6362: Instructional Systems Research Seminar ──
+    // Week 1 — Core readings
+    { course_code:'EDG 6362', title:'New research paradigms in instructional technology: An inquiry', citation:'Driscoll, M. P., & Dick, W. (1999). New research paradigms in instructional technology: An inquiry. Educational Technology Research and Development, 47(2), 7-18. doi:10.1007/bf02299462', week_label:'Week 1 · Core' },
+    { course_code:'EDG 6362', title:'Historical foundations', citation:'Molenda, M. (2008). Historical foundations. In J. M. Spector, M. D. Merrill, J. J. G. van Merriënboer & M. P. Driscoll (Eds.), Handbook of research on educational communications and technology (pp. 3-20). New York, NY: Routledge.', week_label:'Week 1 · Core' },
+    // Week 1 — Additional readings
+    { course_code:'EDG 6362', title:'Theory development', citation:'Elen, J., & Clarebout, G. (2008). Theory development. In J. M. Spector, M. D. Merrill, J. J. G. van Merriënboer & M. P. Driscoll (Eds.), Handbook of research on educational communications and technology (pp. 705-713). New York, NY: Routledge.', week_label:'Week 1 · Additional' },
+    { course_code:'EDG 6362', title:'Formative research: A methodology for creating and improving design theories', citation:'Reigeluth, C. M., & Frick, T. W. (1999). Formative research: A methodology for creating and improving design theories. In C. M. Reigeluth (Ed.), Instructional design theories and models (pp. 633-652). Mahwah, NJ: Lawrence Erlbaum Associates.', week_label:'Week 1 · Additional' },
+    // Week 1 — For reference
+    { course_code:'EDG 6362', title:'Types of knowledge of education created through disciplined inquiry', citation:'Frick, T. (2004). Types of knowledge of education created through disciplined inquiry. Bloomington: Indiana University, School of Education. [PDF]', week_label:'Week 1 · Reference' },
+    // Week 2 — Research and Publishing Trends (Skim for big ideas)
+    { course_code:'EDG 6362', title:'Research trends in instructional design and technology journals', citation:'Bodily, R., Leary, H., & West, R. E. (2019). Research trends in instructional design and technology journals. British Journal of Educational Technology, 50(1), 64-79. doi:10.1111/bjet.12712', week_label:'Week 2 · Skim', url:'https://doi.org/10.1111/bjet.12712' },
+    { course_code:'EDG 6362', title:'The importance of choosing the right keywords for educational technology publications', citation:'Corrin, L., Thompson, K., Hwang, G. J., & Lodge, J. M. (2022). The importance of choosing the right keywords for educational technology publications. Australasian Journal of Educational Technology, 38(2), 1-8.', week_label:'Week 2 · Skim' },
+    // Week 2 — Older perspective (quick skim)
+    { course_code:'EDG 6362', title:'Where do educational technologists really publish? An examination of successful emerging scholars\' publication outlets', citation:'Carr-Chellman, A. A. (2006). Where do educational technologists really publish? An examination of successful emerging scholars\' publication outlets. British Journal of Educational Technology, 37(1), 5-15. doi:10.1111/j.1467-8535.2005.00522.x', week_label:'Week 2 · Older Perspective' },
+    { course_code:'EDG 6362', title:'Instructional systems design and the learning sciences: A citation analysis', citation:'Kirby, J., Hoadley, C., & Carr-Chellman, A. (2005). Instructional systems design and the learning sciences: A citation analysis. Educational Technology Research and Development, 53(1), 37-47. doi:10.1007/bf02504856', week_label:'Week 2 · Older Perspective' },
+    // Week 2 — Research approaches (reference point)
+    { course_code:'EDG 6362', title:'Research designs', citation:'Ross, S. M., Morrison, G. R., Hannafin, R. D., Young, M., van den Akker, J., Kuiper, W., . . . Klein, J. D. (2008). Research designs. In J. M. Spector, M. D. Merrill, J. van Merrienboer & M. P. Driscoll (Eds.), Handbook of Research on Educational Communications and Technology (pp. 715-761). New York, NY: Routledge.', week_label:'Week 2 · Research Approaches' },
+    { course_code:'EDG 6362', title:'Data collection and analysis', citation:'van Gog, T., Paas, F., Savenye, W., Robinson, R., Niemczyk, M., Atkinson, R., . . . Hancock, P. A. (2008). Data collection and analysis. In J. M. Spector, M. D. Merrill, J. van Merrienboer & M. P. Driscoll (Eds.), Handbook of Research on Educational Communications and Technology (pp. 763-806). New York, NY: Routledge.', week_label:'Week 2 · Research Approaches' },
+
+    // ── EME 6920: Learning Design & Performance Technology Colloquium ──
+    // Unit 1 — Citation & Resource Management (Weeks 1-3)
+    { course_code:'EME 6920', title:'An emerging scholar\'s guide to more effective citation of sources and management of citations', citation:'Lowry, P. B. (2019). An emerging scholar\'s guide to more effective citation of sources and management of citations. Available at SSRN 3367239.', week_label:'Unit 1 · Citation Mgmt', url:'https://ssrn.com/abstract=3367239' },
+    { course_code:'EME 6920', title:'Say yes to the reference manager', citation:'Lavery, M. (2015). Say yes to the reference manager. Gradhacker. Available at https://www.insidehighered.com/blogs/gradhacker/say-yes-reference-manager', week_label:'Unit 1 · Citation Mgmt', url:'https://www.insidehighered.com/blogs/gradhacker/say-yes-reference-manager' },
+    // Unit 1 — Citation Manager Info Resources
+    { course_code:'EME 6920', title:'FSU Citation Guide', citation:'FSU Libraries. FSU Citation Guide.', week_label:'Unit 1 · Resources', url:'https://guides.lib.fsu.edu/citation' },
+    { course_code:'EME 6920', title:'University of Chicago: How to Choose a Citation Manager', citation:'University of Chicago Library. How to Choose a Citation Manager.', week_label:'Unit 1 · Resources' },
+    { course_code:'EME 6920', title:'A helpful guide to making EndNote and APA Style work together', citation:'APA Style. A helpful guide to making EndNote and APA Style work together (conceptually valuable no matter what tool you use).', week_label:'Unit 1 · Resources' }
+  ],
+  milestones: [
+    { name:'Program Start', description:'Begin doctoral coursework', icon:'ti ti-rocket', sort_order:1 },
+    { name:'Complete Coursework', description:'Finish all required courses', icon:'ti ti-school', sort_order:2 },
+    { name:'Research Proposal Approved', description:'Proposal accepted by committee', icon:'ti ti-check', sort_order:3 },
+    { name:'Prospectus Defended', description:'Prospectus defense passed', icon:'ti ti-presentation', sort_order:4 },
+    { name:'IRB Approval', description:'Research approved by IRB', icon:'ti ti-shield-check', sort_order:5 },
+    { name:'Data Collection Complete', description:'All data gathered', icon:'ti ti-database', sort_order:6 },
+    { name:'Dissertation Draft Complete', description:'Full draft submitted to advisor', icon:'ti ti-file-text', sort_order:7 },
+    { name:'Dissertation Defense', description:'Final oral defense', icon:'ti ti-award', sort_order:8 },
+    { name:'Degree Conferred', description:'Ed.D. awarded', icon:'ti ti-certificate', sort_order:9 }
+  ]
+};
+
+// ── SUPABASE ──────────────────────────────────────
+async function sb(method, table, body=null, id=null) {
+  const url = `${SB_URL}/rest/v1/${table}${id ? `?id=eq.${id}` : ''}`;
+  const headers = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if (!res.ok) { const e = await res.text(); throw new Error(e); }
+  return res.status === 204 ? [] : res.json();
+}
+async function sbGet(table, params='') {
+  const res = await fetch(`${SB_URL}/rest/v1/${table}?${params}&order=created_at.asc`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+  });
+  return res.json();
+}
+async function sbPatch(table, id, body) {
+  return sb('PATCH', `${table}?id=eq.${id}`, body);
+}
+async function sbDelete(table, id) {
+  const res = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+  });
+  return res.ok;
+}
+
+// ── INIT ─────────────────────────────────────────
+async function connectSupabase() {
+  SB_URL = document.getElementById('sbUrl').value.trim().replace(/\/$/, '');
+  SB_KEY = document.getElementById('sbKey').value.trim();
+  if (!SB_URL || !SB_KEY) { showToast('Please fill in both fields'); return; }
+  try {
+    await sbGet('semesters', 'limit=1');
+    localStorage.setItem('sb_url', SB_URL);
+    localStorage.setItem('sb_key', SB_KEY);
+    await launch();
+  } catch(e) { showToast('Connection failed — check your URL and key'); }
+}
+
+async function launch() {
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('topnav').style.display = 'flex';
+  document.getElementById('mainContent').style.display = 'block';
+  await loadAll();
+  if (!semesters.length) await seedData();
+  initDark();
+  nav('today');
+}
+
+async function loadAll() {
+  [semesters, courses, assignments, readings, notes, milestones] = await Promise.all([
+    sbGet('semesters'), sbGet('courses'), sbGet('assignments'),
+    sbGet('readings'), sbGet('notes'), sbGet('milestones','order=sort_order.asc')
+  ]);
+  const raw = localStorage.getItem('discData');
+  discData = raw ? JSON.parse(raw) : {};
+}
+
+async function seedData() {
+  showToast('Setting up Summer 2026 data…');
+  const sem = await sb('POST', 'semesters', SEED.semester);
+  const semId = sem[0].id;
+  for (const c of SEED.courses) {
+    const cr = await sb('POST', 'courses', { ...c, semester_id: semId });
+    const cid = cr[0].id;
+    for (const a of SEED.assignments.filter(x => x.course_code === c.code)) {
+      const { course_code, ...rest } = a;
+      await sb('POST', 'assignments', { ...rest, course_id: cid });
+    }
+    for (const r of SEED.readings.filter(x => x.course_code === c.code)) {
+      const { course_code, ...rest } = r;
+      await sb('POST', 'readings', { ...rest, course_id: cid });
+    }
+  }
+  for (const m of SEED.milestones) await sb('POST', 'milestones', m);
+  await loadAll();
+  showToast('Summer 2026 data loaded!');
+  renderAll();
+}
+
+// ── DARK MODE ─────────────────────────────────────
+function initDark() {
+  const saved = localStorage.getItem('darkMode');
+  const pref = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const dark = saved !== null ? saved === 'true' : pref;
+  applyDark(dark);
+}
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  applyDark(!isDark);
+}
+function applyDark(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  localStorage.setItem('darkMode', dark);
+  const btn = document.getElementById('darkBtn');
+  if (btn) btn.innerHTML = dark ? '<i class="ti ti-sun"></i>' : '<i class="ti ti-moon"></i>';
+  const tog = document.getElementById('darkToggleDrawer');
+  if (tog) tog.checked = dark;
+}
+
+// ── NAV ──────────────────────────────────────────
+function nav(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('[id^="nav-"]').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('.drawer-links a').forEach(a => a.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  currentPage = page;
+  renderPage(page);
+  window.scrollTo(0, 0);
+}
+function renderPage(page) {
+  if (page === 'today') renderToday();
+  else if (page === 'dashboard') renderDashboard();
+  else if (page === 'assignments') renderAssignments();
+  else if (page === 'readings') renderReadings();
+  else if (page === 'timeline') renderTimeline();
+  else if (page === 'notes') renderNotes();
+  else if (page === 'dissertation') renderDissertation();
+  else if (page === 'export') renderExport();
+}
+function renderAll() { renderPage(currentPage); }
+
+function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
+function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
+
+// ── HELPERS ──────────────────────────────────────
+function courseById(id) { return courses.find(c => c.id === id) || {}; }
+function courseTag(c) {
+  if (!c || !c.code) return '';
+  const color = c.color === 'gold' ? 'tag-gold' : c.color === 'blue' ? 'tag-blue' : 'tag-garnet';
+  return `<span class="tag ${color}">${c.code}</span>`;
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d + 'T12:00:00');
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+function daysUntil(d) {
+  if (!d) return null;
+  return Math.ceil((new Date(d + 'T12:00:00') - new Date()) / 86400000);
+}
+function urgencyDot(d) {
+  const days = daysUntil(d);
+  if (days === null) return 'ok';
+  if (days < 0) return 'overdue';
+  if (days <= 3) return 'soon';
+  return 'ok';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+
+// ── TODAY ─────────────────────────────────────────
+function renderToday() {
+  const now = new Date();
+  const hour = now.getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('todayGreeting').textContent = greet + '!';
+  document.getElementById('todaySubtitle').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  // Action items
+  const upcoming = assignments.filter(a => !a.completed && a.due_date)
+    .sort((a,b) => new Date(a.due_date) - new Date(b.due_date));
+  const overdue = upcoming.filter(a => daysUntil(a.due_date) < 0);
+  const due3 = upcoming.filter(a => { const d = daysUntil(a.due_date); return d >= 0 && d <= 3; });
+  const due7 = upcoming.filter(a => { const d = daysUntil(a.due_date); return d > 3 && d <= 7; });
+
+  let html = '';
+  if (!overdue.length && !due3.length && !due7.length) {
+    html = '<div class="focus-item urgency-green"><div class="focus-icon green"><i class="ti ti-check"></i></div><div class="focus-content"><strong>All clear!</strong><span>No urgent deadlines in the next 7 days.</span></div></div>';
+  }
+  overdue.forEach(a => {
+    const c = courseById(a.course_id);
+    html += `<div class="focus-item urgency-red"><div class="focus-icon red"><i class="ti ti-alert-triangle"></i></div><div class="focus-content"><strong>${a.name}</strong><span>OVERDUE · ${courseTag(c)}</span></div></div>`;
+  });
+  due3.forEach(a => {
+    const c = courseById(a.course_id);
+    html += `<div class="focus-item urgency-amber"><div class="focus-icon amber"><i class="ti ti-clock"></i></div><div class="focus-content"><strong>${a.name}</strong><span>Due ${fmtDate(a.due_date)} · ${courseTag(c)}</span></div></div>`;
+  });
+  due7.forEach(a => {
+    const c = courseById(a.course_id);
+    html += `<div class="focus-item urgency-blue"><div class="focus-icon blue"><i class="ti ti-calendar"></i></div><div class="focus-content"><strong>${a.name}</strong><span>Due ${fmtDate(a.due_date)} · ${courseTag(c)}</span></div></div>`;
+  });
+  document.getElementById('todayActions').innerHTML = html;
+
+  // Suggested readings
+  const unread = readings.filter(r => !r.is_read);
+  const suggest = unread.slice(0, 3);
+  let rhtml = '';
+  suggest.forEach(r => {
+    const c = courseById(r.course_id);
+    rhtml += `<div class="focus-item urgency-purple"><div class="focus-icon purple"><i class="ti ti-book-open"></i></div><div class="focus-content"><strong>${r.title}</strong><span>${r.week_label || ''} · ${courseTag(c)}</span></div></div>`;
+  });
+  if (!suggest.length) rhtml = '<div class="focus-item urgency-green"><div class="focus-icon green"><i class="ti ti-check"></i></div><div class="focus-content"><strong>All readings complete!</strong><span>Nothing left unread.</span></div></div>';
+  document.getElementById('todayReadings').innerHTML = rhtml;
+
+  // Reading estimate
+  const mins = unread.length * 20;
+  const perDay = Math.ceil(mins / 7);
+  document.getElementById('todayReadEst').innerHTML = `
+    <div style="font-size:13px;color:var(--text2);margin-bottom:8px"><strong style="color:var(--text)">${unread.length}</strong> unread readings remaining</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:8px">~<strong style="color:var(--text)">${mins} min</strong> total estimated reading time (20 min/reading avg)</div>
+    <div style="font-size:13px;color:var(--text2)">To finish by semester end: ~<strong style="color:var(--garnet)">${perDay} min/day</strong></div>
+  `;
+}
+
+// ── DASHBOARD ────────────────────────────────────
+function renderDashboard() {
+  const curSem = semesters.find(s => s.is_current) || semesters[0] || {};
+  document.getElementById('semesterLabel').textContent = curSem.name || '';
+
+  const total = assignments.length;
+  const done = assignments.filter(a => a.completed).length;
+  const totalR = readings.length;
+  const readR = readings.filter(r => r.is_read).length;
+
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total Assignments</div></div>
+    <div class="stat-card"><div class="stat-num">${done}</div><div class="stat-label">Completed</div></div>
+    <div class="stat-card"><div class="stat-num">${readR}/${totalR}</div><div class="stat-label">Readings Done</div></div>
+    <div class="stat-card"><div class="stat-num">${notes.length}</div><div class="stat-label">Research Notes</div></div>
+  `;
+
+  const semCourses = curSem.id ? courses.filter(c => c.semester_id === curSem.id) : courses;
+  const colorMap = ['c-garnet', 'c-gold', 'c-blue'];
+  document.getElementById('courseGrid').innerHTML = semCourses.map((c,i) => {
+    const cAssign = assignments.filter(a => a.course_id === c.id);
+    const cDone = cAssign.filter(a => a.completed).length;
+    const pct = cAssign.length ? Math.round(cDone/cAssign.length*100) : 0;
+    const next = cAssign.filter(a => !a.completed && a.due_date).sort((a,b) => new Date(a.due_date)-new Date(b.due_date))[0];
+    return `<div class="course-card ${colorMap[i]||'c-garnet'}">
+      <div class="course-code">${c.code} · ${c.credits} cr</div>
+      <div class="course-name">${c.name}</div>
+      <div class="course-meta">
+        <span><i class="ti ti-user"></i>${c.instructor || '—'}</span>
+        ${c.email ? `<span><i class="ti ti-mail"></i><a href="mailto:${c.email}">${c.email}</a></span>` : ''}
+        <span style="margin-top:4px"><i class="ti ti-checkbox"></i>${cDone}/${cAssign.length} assignments done</span>
+        ${next ? `<span><i class="ti ti-clock"></i>Next: ${next.name} (${fmtDate(next.due_date)})</span>` : ''}
+      </div>
+      <div class="course-progress">
+        <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:3px">${pct}% complete</div>
+        <div class="course-progress-bar"><div class="course-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Upcoming deadlines
+  const upcoming = assignments.filter(a => !a.completed && a.due_date)
+    .sort((a,b) => new Date(a.due_date)-new Date(b.due_date)).slice(0,8);
+  let dlHtml = upcoming.map(a => {
+    const c = courseById(a.course_id);
+    const dot = urgencyDot(a.due_date);
+    return `<div class="deadline-item"><div class="dl-dot ${dot}"></div><span class="dl-name">${a.name}</span>${courseTag(c)}<span class="dl-meta">${fmtDate(a.due_date)}</span></div>`;
+  }).join('') || '<p style="color:var(--text3);font-size:13px;padding:8px 0">No upcoming deadlines</p>';
+  document.getElementById('upcomingDeadlines').innerHTML = dlHtml;
+
+  // Connections
+  const conns = [
+    { title:'Shared Research Proposal', courses:['EDF 5492','EDG 6362'], desc:'The capstone proposal counts for both courses — coordinate your effort.' },
+    { title:'Research Ethics (IRB / CITI)', courses:['EDF 5492','EME 6920'], desc:'Ethics module in EDF 5492 aligns with CITI Training in EME 6920.' },
+    { title:'APA Writing Standard', courses:['EDF 5492','EDG 6362'], desc:'Both courses require APA 7th edition throughout all written work.' },
+    { title:'Citation Management', courses:['EME 6920','EDF 5492'], desc:'Zotero setup (EME 6920 Unit 1) feeds directly into your literature review.' },
+  ];
+  document.getElementById('connectionsShort').innerHTML = conns.map(c => `
+    <div class="conn-card">
+      <div class="conn-title"><i class="ti ti-link"></i>${c.title}</div>
+      <div class="conn-courses">${c.courses.map(x => `<span class="tag tag-garnet">${x}</span>`).join('')}</div>
+      <div class="conn-desc">${c.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ── ASSIGNMENTS ──────────────────────────────────
+function renderAssignments() {
+  const semCourses = courses;
+  const filterEl = document.getElementById('assignFilter');
+  const filters = ['All', ...new Set(semCourses.map(c => c.code))];
+  filterEl.innerHTML = filters.map(f =>
+    `<button class="filter-btn ${f === 'All' ? (currentCourseFilter==='all'?'active':'') : (currentCourseFilter===f?'active':'')}" onclick="setAssignFilter('${f}')">${f}</button>`
+  ).join('');
+
+  let list = [...assignments];
+  if (currentCourseFilter !== 'all') {
+    const c = courses.find(x => x.code === currentCourseFilter);
+    if (c) list = list.filter(a => a.course_id === c.id);
+  }
+  list.sort((a,b) => {
+    if (!a.due_date && !b.due_date) return 0;
+    if (!a.due_date) return 1;
+    if (!b.due_date) return -1;
+    return new Date(a.due_date) - new Date(b.due_date);
+  });
+
+  document.getElementById('assignBody').innerHTML = list.map(a => {
+    const c = courseById(a.course_id);
+    return `<tr class="${a.completed ? 'completed-row' : ''}">
+      <td><div class="check-circle ${a.completed ? 'done' : ''}" onclick="toggleAssign('${a.id}')"></div></td>
+      <td><span class="dl-name">${a.name}</span></td>
+      <td class="hide-mobile">${courseTag(c)}</td>
+      <td class="hide-mobile">${fmtDate(a.due_date)}</td>
+      <td class="hide-mobile">${a.weight ? a.weight + '%' : '—'}</td>
+      <td><button class="btn btn-secondary btn-sm btn-icon" onclick="editAssignment('${a.id}')"><i class="ti ti-pencil"></i></button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">No assignments yet</td></tr>';
+}
+
+function setAssignFilter(f) { currentCourseFilter = f === 'All' ? 'all' : f; renderAssignments(); }
+
+async function toggleAssign(id) {
+  const a = assignments.find(x => x.id === id);
+  if (!a) return;
+  a.completed = !a.completed;
+  await sbPatch('assignments', id, { completed: a.completed });
+  renderAssignments();
+  if (currentPage === 'dashboard') renderDashboard();
+  if (currentPage === 'today') renderToday();
+}
+
+function openAddAssignment() {
+  document.getElementById('editAssignId').value = '';
+  document.getElementById('assignName').value = '';
+  document.getElementById('assignDue').value = '';
+  document.getElementById('assignWeight').value = '';
+  document.getElementById('assignNotes').value = '';
+  document.getElementById('assignModalTitle').textContent = 'Add Assignment';
+  const sel = document.getElementById('assignCourse');
+  sel.innerHTML = courses.map(c => `<option value="${c.id}">${c.code}</option>`).join('');
+  openModal('modalAssignment');
+}
+
+function editAssignment(id) {
+  const a = assignments.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('editAssignId').value = id;
+  document.getElementById('assignName').value = a.name;
+  document.getElementById('assignDue').value = a.due_date || '';
+  document.getElementById('assignWeight').value = a.weight || '';
+  document.getElementById('assignNotes').value = a.notes || '';
+  document.getElementById('assignModalTitle').textContent = 'Edit Assignment';
+  const sel = document.getElementById('assignCourse');
+  sel.innerHTML = courses.map(c => `<option value="${c.id}" ${c.id === a.course_id ? 'selected' : ''}>${c.code}</option>`).join('');
+  document.getElementById('assignType').value = a.type || 'Assignment';
+  openModal('modalAssignment');
+}
+
+async function saveAssignment() {
+  const id = document.getElementById('editAssignId').value;
+  const data = {
+    name: document.getElementById('assignName').value.trim(),
+    course_id: document.getElementById('assignCourse').value,
+    type: document.getElementById('assignType').value,
+    due_date: document.getElementById('assignDue').value || null,
+    weight: parseFloat(document.getElementById('assignWeight').value) || null,
+    notes: document.getElementById('assignNotes').value.trim()
+  };
+  if (!data.name) { showToast('Assignment name required'); return; }
+  if (id) { await sbPatch('assignments', id, data); Object.assign(assignments.find(a => a.id === id), data); }
+  else { const r = await sb('POST', 'assignments', { ...data, completed: false }); assignments.push(r[0]); }
+  closeModal('modalAssignment');
+  renderAssignments();
+  showToast('Saved!');
+}
+
+// ── READINGS ─────────────────────────────────────
+function renderReadings() {
+  const done = readings.filter(r => r.is_read).length;
+  document.getElementById('readProgress').textContent = `${done} / ${readings.length} readings complete`;
+
+  const filters = ['All', ...new Set(courses.map(c => c.code))];
+  document.getElementById('readFilter').innerHTML = filters.map(f =>
+    `<button class="filter-btn ${f === 'All' ? (currentReadFilter==='all'?'active':'') : (currentReadFilter===f?'active':'')}" onclick="setReadFilter('${f}')">${f}</button>`
+  ).join('');
+
+  let list = [...readings];
+  if (currentReadFilter !== 'all') {
+    const c = courses.find(x => x.code === currentReadFilter);
+    if (c) list = list.filter(r => r.course_id === c.id);
+  }
+
+  // Group by course then week
+  const grouped = {};
+  list.forEach(r => {
+    const c = courseById(r.course_id);
+    const key = c.code || 'Unknown';
+    if (!grouped[key]) grouped[key] = {};
+    const wk = r.week_label || 'General';
+    if (!grouped[key][wk]) grouped[key][wk] = [];
+    grouped[key][wk].push(r);
+  });
+
+  let html = '';
+  Object.entries(grouped).forEach(([code, weeks]) => {
+    html += `<div style="margin-bottom:20px"><div class="section-title" style="margin-bottom:8px"><i class="ti ti-books"></i>${code}</div>`;
+    Object.entries(weeks).forEach(([wk, rs]) => {
+      html += `<div style="font-size:12px;font-weight:600;color:var(--text3);margin:8px 0 4px">${wk}</div>`;
+      rs.forEach(r => {
+        const rCourse = courseById(r.course_id);
+        const rCheckClass = rCourse.color === 'gold' ? 'cc-gold' : rCourse.color === 'blue' ? 'cc-blue' : 'cc-garnet';
+        html += `<div class="reading-row">
+          <div class="check-circle ${r.is_read ? 'done ' + rCheckClass : ''}" onclick="toggleReading('${r.id}')" style="margin-top:2px"></div>
+          <div class="reading-text">
+            <div class="reading-title ${r.is_read ? 'completed-row' : ''}">${r.title}${r.url ? ` <a href="${r.url}" target="_blank" style="font-size:11px;color:var(--garnet);margin-left:6px"><i class="ti ti-external-link"></i></a>` : ''}</div>
+            ${r.citation ? `<div class="reading-citation">${r.citation}</div>` : ''}
+          </div>
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="editReading('${r.id}')"><i class="ti ti-pencil"></i></button>
+        </div>`;
+      });
+    });
+    html += '</div>';
+  });
+  document.getElementById('readingList').innerHTML = html || '<p style="color:var(--text3)">No readings found.</p>';
+}
+
+function setReadFilter(f) { currentReadFilter = f === 'All' ? 'all' : f; renderReadings(); }
+
+async function toggleReading(id) {
+  const r = readings.find(x => x.id === id);
+  if (!r) return;
+  r.is_read = !r.is_read;
+  await sbPatch('readings', id, { is_read: r.is_read });
+  renderReadings();
+}
+
+function openAddReading() {
+  document.getElementById('editReadId').value = '';
+  document.getElementById('readTitle').value = '';
+  document.getElementById('readCitation').value = '';
+  document.getElementById('readWeek').value = '';
+  document.getElementById('readUrl').value = '';
+  document.getElementById('readModalTitle').textContent = 'Add Reading';
+  document.getElementById('readCourse').innerHTML = courses.map(c => `<option value="${c.id}">${c.code}</option>`).join('');
+  openModal('modalReading');
+}
+
+function editReading(id) {
+  const r = readings.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById('editReadId').value = id;
+  document.getElementById('readTitle').value = r.title;
+  document.getElementById('readCitation').value = r.citation || '';
+  document.getElementById('readWeek').value = r.week_label || '';
+  document.getElementById('readUrl').value = r.url || '';
+  document.getElementById('readModalTitle').textContent = 'Edit Reading';
+  document.getElementById('readCourse').innerHTML = courses.map(c => `<option value="${c.id}" ${c.id === r.course_id ? 'selected' : ''}>${c.code}</option>`).join('');
+  openModal('modalReading');
+}
+
+async function saveReading() {
+  const id = document.getElementById('editReadId').value;
+  const data = {
+    title: document.getElementById('readTitle').value.trim(),
+    course_id: document.getElementById('readCourse').value,
+    citation: document.getElementById('readCitation').value.trim(),
+    week_label: document.getElementById('readWeek').value.trim(),
+    url: document.getElementById('readUrl').value.trim() || null
+  };
+  if (!data.title) { showToast('Title required'); return; }
+  if (id) { await sbPatch('readings', id, data); Object.assign(readings.find(r => r.id === id), data); }
+  else { const r = await sb('POST', 'readings', { ...data, is_read: false }); readings.push(r[0]); }
+  closeModal('modalReading');
+  renderReadings();
+  showToast('Saved!');
+}
+
+// ── TIMELINE ─────────────────────────────────────
+function renderTimeline() {
+  const curSem = semesters.find(s => s.is_current) || {};
+  const start = curSem.start_date ? new Date(curSem.start_date + 'T12:00:00') : new Date('2026-05-12');
+  const end = curSem.end_date ? new Date(curSem.end_date + 'T12:00:00') : new Date('2026-08-01');
+  const today = new Date();
+
+  const weeks = [];
+  let d = new Date(start);
+  let wNum = 1;
+  while (d <= end) {
+    const wStart = new Date(d);
+    const wEnd = new Date(d); wEnd.setDate(wEnd.getDate() + 6);
+    const isCurrent = today >= wStart && today <= wEnd;
+    const wDl = assignments.filter(a => {
+      if (!a.due_date) return false;
+      const dd = new Date(a.due_date + 'T12:00:00');
+      return dd >= wStart && dd <= wEnd;
+    });
+    const wR = readings.filter(r => {
+      if (!r.week_label) return false;
+      return r.week_label.toLowerCase().includes(wNum.toString()) ||
+             r.week_label.toLowerCase().includes('week ' + wNum) ||
+             r.week_label.toLowerCase().includes('module ' + wNum);
+    });
+    weeks.push({ num: wNum, start: wStart, end: wEnd, isCurrent, deadlines: wDl, readings: wR });
+    d.setDate(d.getDate() + 7);
+    wNum++;
+  }
+
+  document.getElementById('timelineGrid').innerHTML = weeks.map(w => {
+    const mins = w.readings.length * 20;
+    const pct = Math.min(100, (mins / 120) * 100);
+    return `<div class="week-card ${w.isCurrent ? 'current-week' : ''}">
+      <div class="week-num">Week ${w.num}${w.isCurrent ? ' · CURRENT' : ''}</div>
+      <div class="week-dates">${w.start.toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${w.end.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+      <div class="week-mins"><i class="ti ti-clock" style="font-size:12px"></i> ~${mins} min reading</div>
+      <div class="progress-bar" style="margin-bottom:10px"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="week-deadlines">
+        ${w.deadlines.length ? w.deadlines.map(a => {
+          const c = courseById(a.course_id);
+          return `<div class="week-dl-item"><i class="ti ti-calendar-event"></i><span>${a.name} ${courseTag(c)} <em style="color:var(--text3);font-size:11px">${fmtDate(a.due_date)}</em></span></div>`;
+        }).join('') : '<span style="font-size:12px;color:var(--text3)">No deadlines this week</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DISCUSSION ───────────────────────────────────
+function renderDiscussion() {
+  const curSem = semesters.find(s => s.is_current) || {};
+  const start = curSem.start_date ? new Date(curSem.start_date + 'T12:00:00') : new Date('2026-05-12');
+  const today = new Date();
+
+  const weeks = [];
+  let d = new Date(start);
+  for (let i = 1; i <= 12; i++) {
+    const wEnd = new Date(d); wEnd.setDate(wEnd.getDate() + 6);
+    weeks.push({ num: i, start: new Date(d), end: wEnd });
+    d.setDate(d.getDate() + 7);
+  }
+
+  // Determine 9 graded weeks (weeks with a Sunday deadline — simplified: all 12, lowest dropped)
+  const gradedCount = 9;
+  const tokenUsed = discData['token_used'] || false;
+
+  document.getElementById('discGrid').innerHTML = weeks.map(w => {
+    const key = `week_${w.num}`;
+    const wData = discData[key] || { posts: 0 };
+    const posts = wData.posts || 0;
+    const sunDate = new Date(w.end);
+    const isDropped = w.num === (discData['dropped_week'] || 0);
+    const isPast = today > w.end;
+    const status = posts >= 4 ? 'good' : (posts > 0 ? 'warn' : (isPast ? 'miss' : 'warn'));
+    const statusText = posts >= 4 ? '✓ Complete' : (isPast && posts < 4 ? `${posts}/4 — Missed` : `${posts}/4 posts`);
+
+    return `<div class="disc-card">
+      <div class="disc-week-header">
+        <div class="disc-week-label">Week ${w.num}</div>
+        <div class="disc-deadline">${isDropped ? '🗑 Dropped' : 'Due ' + sunDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+      </div>
+      <div class="disc-dots">
+        ${[1,2,3,4].map(n => `<button class="disc-dot-btn ${posts >= n ? 'filled' : ''}" onclick="setDiscPosts(${w.num}, ${n})">${n}</button>`).join('')}
+        <button class="disc-dot-btn ${posts >= 5 ? 'filled' : ''}" onclick="setDiscPosts(${w.num}, 5)" style="font-size:9px">5+</button>
+      </div>
+      <div class="disc-status ${status}">${statusText}</div>
+      ${isDropped ? '<div class="disc-dropped">Lowest week — automatically dropped</div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function setDiscPosts(week, n) {
+  const key = `week_${week}`;
+  if (!discData[key]) discData[key] = {};
+  discData[key].posts = n;
+  // Auto-mark lowest dropped week
+  const gradedWeeks = Object.entries(discData).filter(([k]) => k.startsWith('week_'));
+  if (gradedWeeks.length >= 9) {
+    const sorted = gradedWeeks.map(([k,v]) => ({ num: parseInt(k.replace('week_','')), posts: v.posts || 0 }))
+      .sort((a,b) => a.posts - b.posts);
+    discData['dropped_week'] = sorted[0].num;
+  }
+  localStorage.setItem('discData', JSON.stringify(discData));
+  renderDiscussion();
+}
+
+// ── GRADES ───────────────────────────────────────
+function renderGrades() {
+  const curSem = semesters.find(s => s.is_current) || {};
+  const semCourses = curSem.id ? courses.filter(c => c.semester_id === curSem.id) : courses;
+
+  document.getElementById('gradesContent').innerHTML = semCourses.map(c => {
+    const cAssign = assignments.filter(a => a.course_id === c.id && a.weight);
+    const graded = cAssign.filter(a => a.grade !== null && a.grade !== undefined);
+    let wavg = null;
+    if (graded.length) {
+      const totalW = graded.reduce((s,a) => s + a.weight, 0);
+      wavg = graded.reduce((s,a) => s + (a.grade * a.weight), 0) / totalW;
+    }
+    return `<div class="card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:15px;font-weight:600">${c.code} — ${c.name}</div>
+        ${wavg !== null ? `<div class="grade-avg">${wavg.toFixed(1)}%</div>` : '<div style="font-size:13px;color:var(--text3)">No grades yet</div>'}
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Assignment</th><th>Weight</th><th style="width:120px">Your Grade %</th></tr></thead>
+        <tbody>
+          ${cAssign.map(a => `<tr>
+            <td>${a.name}</td>
+            <td>${a.weight}%</td>
+            <td><input class="grade-input" type="number" min="0" max="100" value="${a.grade ?? ''}" placeholder="—" onchange="saveGrade('${a.id}', this.value)"></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+async function saveGrade(id, val) {
+  const grade = val === '' ? null : parseFloat(val);
+  await sbPatch('assignments', id, { grade });
+  const a = assignments.find(x => x.id === id);
+  if (a) a.grade = grade;
+  showToast('Grade saved');
+}
+
+// ── NOTES ────────────────────────────────────────
+function renderNotes() {
+  const search = (document.getElementById('noteSearch')?.value || '').toLowerCase();
+  const allTags = new Set();
+  notes.forEach(n => { if (n.tags) n.tags.split(',').forEach(t => allTags.add(t.trim())); });
+
+  const filters = ['All', ...allTags];
+  document.getElementById('noteFilter').innerHTML = filters.map(f =>
+    `<button class="filter-btn ${(f === 'All' ? currentNoteFilter === 'all' : currentNoteFilter === f) ? 'active' : ''}" onclick="setNoteFilter('${f}')">${f}</button>`
+  ).join('');
+
+  let list = [...notes].sort((a,b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at));
+  if (currentNoteFilter !== 'all') list = list.filter(n => n.tags && n.tags.split(',').map(t => t.trim()).includes(currentNoteFilter));
+  if (search) list = list.filter(n => (n.title||'').toLowerCase().includes(search) || n.body.toLowerCase().includes(search) || (n.tags||'').toLowerCase().includes(search));
+
+  document.getElementById('notesGrid').innerHTML = list.map(n => {
+    const c = n.course_id ? courseById(n.course_id) : null;
+    const tags = n.tags ? n.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const dt = new Date(n.updated_at || n.created_at);
+    const noteColorClass = c && c.color === 'gold' ? 'note-gold' : c && c.color === 'blue' ? 'note-blue' : c ? 'note-garnet' : '';
+    return `<div class="note-card ${noteColorClass}" onclick="editNote('${n.id}')">
+      <div class="note-title">${n.title || 'Untitled'}</div>
+      <div class="note-body">${n.body}</div>
+      <div class="note-footer">
+        ${c ? courseTag(c) : ''}
+        ${n.module_label ? `<span class="tag tag-gray">${n.module_label}</span>` : ''}
+        ${tags.map(t => `<span class="tag tag-gray">${t}</span>`).join('')}
+        <span class="note-date">${dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} ${dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</span>
+      </div>
+    </div>`;
+  }).join('') || '<p style="color:var(--text3);grid-column:1/-1">No notes yet. Click "New Note" to start your research journal.</p>';
+}
+
+function setNoteFilter(f) { currentNoteFilter = f === 'All' ? 'all' : f; renderNotes(); }
+
+function getModulesForCourse(courseId) {
+  const c = courseById(courseId);
+  if (!c || !c.code) return [];
+  if (c.code.startsWith('EDF')) return ['Module 1','Module 2','Module 3','Module 4','Module 5','Module 6','Module 7','Module 8','Module 9'];
+  if (c.code.startsWith('EDG')) return ['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6','Week 7','Week 8','Week 9','Week 10'];
+  if (c.code.startsWith('EME')) return ['Unit 1','Unit 2','Unit 3','Unit 4','Unit 5'];
+  return ['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6','Week 7','Week 8'];
+}
+function populateNoteModules(courseId, currentVal) {
+  const sel = document.getElementById('noteModule');
+  if (!sel) return;
+  const mods = getModulesForCourse(courseId);
+  sel.innerHTML = '<option value="">— Select —</option>' + mods.map(m => `<option value="${m}" ${m===currentVal?'selected':''}>${m}</option>`).join('');
+}
+function openAddNote() {
+  document.getElementById('editNoteId').value = '';
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteBody').value = '';
+  document.getElementById('noteTags').value = '';
+  document.getElementById('noteModalTitle').textContent = 'New Note';
+  const nowStr = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) + ' · ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const timeEl = document.getElementById('noteModalTime');
+  if (timeEl) timeEl.textContent = nowStr;
+  const sel = document.getElementById('noteCourse');
+  sel.innerHTML = '<option value="">— No course —</option>' + courses.map(c => `<option value="${c.id}">${c.code} — ${c.name}</option>`).join('');
+  sel.onchange = () => populateNoteModules(sel.value, '');
+  populateNoteModules('', '');
+  openModal('modalNote');
+}
+
+function editNote(id) {
+  const n = notes.find(x => x.id === id);
+  if (!n) return;
+  document.getElementById('editNoteId').value = id;
+  document.getElementById('noteTitle').value = n.title || '';
+  document.getElementById('noteBody').value = n.body;
+  document.getElementById('noteTags').value = n.tags || '';
+  document.getElementById('noteModalTitle').textContent = 'Edit Note';
+  const timeEl = document.getElementById('noteModalTime');
+  if (timeEl) {
+    const dt = new Date(n.updated_at || n.created_at);
+    timeEl.textContent = dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) + ' · ' + dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  }
+  const sel = document.getElementById('noteCourse');
+  sel.innerHTML = '<option value="">— No course —</option>' + courses.map(c => `<option value="${c.id}" ${c.id === n.course_id ? 'selected' : ''}>${c.code} — ${c.name}</option>`).join('');
+  sel.onchange = () => populateNoteModules(sel.value, '');
+  populateNoteModules(n.course_id || '', n.module_label || '');
+  openModal('modalNote');
+}
+
+async function saveNote() {
+  const id = document.getElementById('editNoteId').value;
+  const moduleEl = document.getElementById('noteModule');
+  const data = {
+    title: document.getElementById('noteTitle').value.trim(),
+    body: document.getElementById('noteBody').value.trim(),
+    course_id: document.getElementById('noteCourse').value || null,
+    tags: document.getElementById('noteTags').value.trim(),
+    module_label: moduleEl ? moduleEl.value : null,
+    updated_at: new Date().toISOString()
+  };
+  if (!data.body) { showToast('Note body required'); return; }
+  if (id) { await sbPatch('notes', id, data); Object.assign(notes.find(n => n.id === id), data); }
+  else { const r = await sb('POST', 'notes', data); notes.push(r[0]); }
+  closeModal('modalNote');
+  if (currentPage === 'notes') renderNotes();
+  else { nav('notes'); }
+  showToast('Note saved!');
+}
+
+// ── APA BUILDER ──────────────────────────────────
+function buildApa() {
+  const type = document.getElementById('apaType').value;
+  // Show/hide field groups
+  ['Journal','Book','Chapter','Web','Disser','Report'].forEach(t => {
+    const el = document.getElementById('apa' + t + 'Fields');
+    if (el) el.style.display = 'none';
+  });
+  const showMap = { journal: 'apaJournalFields', book: 'apaBookFields', chapter: 'apaChapterFields', website: 'apaWebFields', dissertation: 'apaDisserFields', report: 'apaReportFields' };
+  const shown = document.getElementById(showMap[type]);
+  if (shown) shown.style.display = 'block';
+  const volWrap = document.getElementById('apaVolumeWrap');
+  if (volWrap) volWrap.style.display = type === 'journal' ? '' : 'none';
+
+  const rawAuthors = (document.getElementById('apaAuthors').value || '').trim().split('\n').map(a => a.trim()).filter(Boolean);
+  const year = document.getElementById('apaYear').value.trim() || 'n.d.';
+  const title = document.getElementById('apaTitle').value.trim();
+
+  function fmtAuthors(arr) {
+    if (!arr.length) return '';
+    if (arr.length === 1) return arr[0];
+    if (arr.length === 2) return arr[0] + ', & ' + arr[1];
+    if (arr.length <= 6) return arr.slice(0,-1).join(', ') + ', & ' + arr[arr.length-1];
+    return arr.slice(0,6).join(', ') + ', . . . ' + arr[arr.length-1];
+  }
+
+  const authors = fmtAuthors(rawAuthors);
+  const authorStr = authors ? authors + '. ' : '';
+  const yearStr = `(${year}). `;
+
+  let citation = '';
+
+  if (type === 'journal') {
+    const journal = document.getElementById('apaJournal').value.trim();
+    const vol = document.getElementById('apaVolume').value.trim();
+    const issue = document.getElementById('apaIssue').value.trim();
+    const pages = document.getElementById('apaPages').value.trim();
+    const doi = document.getElementById('apaDoi').value.trim();
+    let journalPart = journal ? `<em>${journal}</em>` : '';
+    if (vol) journalPart += `, <em>${vol}</em>`;
+    if (issue) journalPart += `(${issue})`;
+    if (pages) journalPart += `, ${pages}`;
+    citation = `${authorStr}${yearStr}${title ? title + '. ' : ''}${journalPart ? journalPart + '.' : ''}${doi ? ' ' + doi : ''}`;
+  } else if (type === 'book') {
+    const pub = document.getElementById('apaPublisher').value.trim();
+    const ed = document.getElementById('apaEdition').value.trim();
+    const doi = document.getElementById('apaBookDoi').value.trim();
+    const titleStr = title ? (ed ? `<em>${title}</em> (${ed} ed.)` : `<em>${title}</em>`) : '';
+    citation = `${authorStr}${yearStr}${titleStr ? titleStr + '.' : ''}${pub ? ' ' + pub + '.' : ''}${doi ? ' ' + doi : ''}`;
+  } else if (type === 'chapter') {
+    const chapTitle = document.getElementById('apaChapterTitle').value.trim();
+    const eds = document.getElementById('apaEditors').value.trim();
+    const bookTitle = document.getElementById('apaBookTitle').value.trim();
+    const chapPages = document.getElementById('apaChapPages').value.trim();
+    const pub = document.getElementById('apaChapPublisher').value.trim();
+    const edStr = eds ? `In ${eds} (Ed${eds.includes('&') ? 's' : ''}.), ` : 'In ';
+    citation = `${authorStr}${yearStr}${chapTitle ? chapTitle + '. ' : ''}${edStr}${bookTitle ? `<em>${bookTitle}</em>` : ''}${chapPages ? ` (${chapPages})` : ''}.${pub ? ' ' + pub + '.' : ''}`;
+  } else if (type === 'website') {
+    const site = document.getElementById('apaSite').value.trim();
+    const url = document.getElementById('apaUrl').value.trim();
+    citation = `${authorStr}${yearStr}${title ? title + '. ' : ''}${site ? site + '.' : ''}${url ? ' ' + url : ''}`;
+  } else if (type === 'dissertation') {
+    const inst = document.getElementById('apaInstitution').value.trim();
+    const db = document.getElementById('apaDisserUrl').value.trim();
+    citation = `${authorStr}${yearStr}${title ? `<em>${title}</em>` : ''} [Doctoral dissertation${inst ? ', ' + inst : ''}].${db ? ' ' + db + '.' : ''}`;
+  } else if (type === 'report') {
+    const inst = document.getElementById('apaReportInst').value.trim();
+    const num = document.getElementById('apaReportNum').value.trim();
+    const url = document.getElementById('apaReportUrl').value.trim();
+    citation = `${authorStr}${yearStr}${title ? `<em>${title}</em>` : ''}${num ? ` (Report No. ${num})` : ''}.${inst ? ' ' + inst + '.' : ''}${url ? ' ' + url : ''}`;
+  }
+
+  document.getElementById('apaOutput').innerHTML = citation || 'Fill in the fields to generate your citation…';
+}
+
+function copyApa() {
+  const text = document.getElementById('apaOutput').innerText;
+  navigator.clipboard.writeText(text).then(() => showToast('Citation copied!')).catch(() => showToast('Copy failed'));
+}
+
+function clearApa() {
+  ['apaAuthors','apaYear','apaTitle','apaJournal','apaVolume','apaIssue','apaPages','apaDoi',
+   'apaPublisher','apaEdition','apaBookDoi','apaChapterTitle','apaEditors','apaBookTitle','apaChapPages','apaChapPublisher',
+   'apaSite','apaUrl','apaInstitution','apaDisserUrl','apaReportInst','apaReportNum','apaReportUrl'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  buildApa();
+}
+
+async function saveApaToNotes() {
+  const citation = document.getElementById('apaOutput').innerText;
+  if (!citation || citation.includes('Fill in')) { showToast('Build a citation first'); return; }
+  const data = { title: 'APA Citation', body: citation, tags: 'apa,citation', updated_at: new Date().toISOString() };
+  const r = await sb('POST', 'notes', data);
+  notes.push(r[0]);
+  showToast('Saved to Notes!');
+}
+
+// ── DISSERTATION ─────────────────────────────────
+function renderDissertation() {
+  document.getElementById('milestoneTrack').innerHTML = milestones.map(m => `
+    <div class="milestone-item ${m.completed ? 'done' : ''}" onclick="toggleMilestone('${m.id}')">
+      <div class="milestone-icon"><i class="${m.icon || 'ti ti-target'}"></i></div>
+      <div style="flex:1">
+        <div class="milestone-name">${m.name}</div>
+        <div class="milestone-desc">${m.description || ''}</div>
+        ${m.target_date ? `<div class="milestone-date"><i class="ti ti-calendar" style="font-size:12px"></i> Target: ${fmtDate(m.target_date)}</div>` : ''}
+      </div>
+      <div>${m.completed ? '<span class="tag tag-green"><i class="ti ti-check"></i> Done</span>' : '<span class="tag tag-gray">Pending</span>'}</div>
+    </div>
+  `).join('') || '<p style="color:var(--text3);padding:16px">No milestones yet. Click "Load defaults" to get started.</p>';
+}
+
+async function toggleMilestone(id) {
+  const m = milestones.find(x => x.id === id);
+  if (!m) return;
+  m.completed = !m.completed;
+  await sbPatch('milestones', id, { completed: m.completed });
+  renderDissertation();
+}
+
+async function loadDefaultMilestones() {
+  if (milestones.length) { showToast('Milestones already loaded'); return; }
+  for (const m of SEED.milestones) { const r = await sb('POST', 'milestones', m); milestones.push(r[0]); }
+  renderDissertation();
+  showToast('Default milestones loaded!');
+}
+
+// ── EXPORT ───────────────────────────────────────
+function renderExport() {
+  const curSem = semesters.find(s => s.is_current) || semesters[0] || {};
+  document.getElementById('exportTitle').textContent = curSem.name || 'Semester Summary';
+  document.getElementById('exportSubtitle').textContent = 'Generated ' + new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const total = assignments.length;
+  const done = assignments.filter(a => a.completed).length;
+  const totalR = readings.length;
+  const readR = readings.filter(r => r.is_read).length;
+
+  document.getElementById('exportStats').innerHTML = `
+    <div class="export-stat"><div class="export-stat-num">${done}/${total}</div><div class="export-stat-label">Assignments Done</div></div>
+    <div class="export-stat"><div class="export-stat-num">${readR}/${totalR}</div><div class="export-stat-label">Readings Done</div></div>
+    <div class="export-stat"><div class="export-stat-num">${notes.length}</div><div class="export-stat-label">Research Notes</div></div>
+    <div class="export-stat"><div class="export-stat-num">${milestones.filter(m => m.completed).length}/${milestones.length}</div><div class="export-stat-label">Milestones Done</div></div>
+  `;
+
+  const semCourses = curSem.id ? courses.filter(c => c.semester_id === curSem.id) : courses;
+  document.getElementById('exportCourses').innerHTML = semCourses.map(c => {
+    const cA = assignments.filter(a => a.course_id === c.id);
+    const cDone = cA.filter(a => a.completed).length;
+    return `<div style="margin-bottom:20px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--garnet)">${c.code} — ${c.name}</div>
+      <table class="tbl">
+        <thead><tr><th>Assignment</th><th>Due</th><th>Status</th></tr></thead>
+        <tbody>
+          ${cA.map(a => `<tr>
+            <td>${a.name}</td>
+            <td>${a.due_date ? new Date(a.due_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—'}</td>
+            <td>${a.completed ? '<span class="tag tag-green"><i class="ti ti-check"></i> Done</span>' : '<span class="tag tag-gray">Pending</span>'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+function downloadExportPDF() {
+  const { jsPDF } = window.jspdf;
+  if (!jsPDF) { showToast('PDF library not loaded yet — try again in a moment'); return; }
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const GARNET = [139, 26, 46];
+  const GOLD   = [196, 138, 0];
+  const BLUE   = [30, 98, 194];
+  const DARK   = [30, 28, 24];
+  const GRAY   = [110, 108, 101];
+  const LGRAY  = [220, 218, 214];
+  const pageW  = 210;
+  const margin = 16;
+  const contentW = pageW - 2 * margin;
+  let y = 0;
+
+  function newPage() { doc.addPage(); y = 18; }
+  function checkY(need) { if (y + need > 274) newPage(); }
+
+  // ── HEADER BAND ──
+  doc.setFillColor(...GARNET);
+  doc.rect(0, 0, pageW, 30, 'F');
+  doc.setFillColor(...GOLD);
+  doc.rect(0, 30, pageW, 2, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(20);
+  doc.text('FSU Ed.D. Dashboard', margin, 14);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+  doc.setTextColor(230, 210, 170);
+  const curSem = semesters.find(s => s.is_current) || semesters[0] || {};
+  doc.text((curSem.name || 'Semester') + '  ·  Progress Report', margin, 23);
+  doc.setTextColor(200, 175, 130);
+  doc.text('Generated ' + new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }), pageW - margin, 23, { align: 'right' });
+  y = 38;
+
+  // ── STAT BOXES ──
+  const totalA = assignments.length;
+  const doneA  = assignments.filter(a => a.completed).length;
+  const totalR = readings.length;
+  const readR  = readings.filter(r => r.is_read).length;
+  const mDone  = milestones.filter(m => m.completed).length;
+  const stats  = [
+    [doneA + '/' + totalA, 'Assignments Done'],
+    [readR + '/' + totalR, 'Readings Done'],
+    [notes.length + '', 'Research Notes'],
+    [mDone + '/' + milestones.length, 'Milestones'],
+  ];
+  const sw = (contentW - 9) / 4;
+  stats.forEach((s, i) => {
+    const sx = margin + i * (sw + 3);
+    doc.setFillColor(248, 244, 240);
+    doc.roundedRect(sx, y, sw, 20, 2, 2, 'F');
+    doc.setDrawColor(...LGRAY); doc.setLineWidth(0.3);
+    doc.roundedRect(sx, y, sw, 20, 2, 2, 'S');
+    doc.setTextColor(...GARNET); doc.setFont('helvetica', 'bold'); doc.setFontSize(17);
+    doc.text(s[0], sx + sw / 2, y + 11, { align: 'center' });
+    doc.setTextColor(...GRAY); doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
+    doc.text(s[1], sx + sw / 2, y + 17, { align: 'center' });
+  });
+  y += 28;
+
+  // ── COURSE SECTIONS ──
+  const semCourses = curSem.id ? courses.filter(c => c.semester_id === curSem.id) : courses;
+  const courseColors = [GARNET, GOLD, BLUE];
+
+  semCourses.forEach((c, ci) => {
+    checkY(22);
+    const col = courseColors[ci] || GARNET;
+    const cA  = assignments.filter(a => a.course_id === c.id);
+    const done = cA.filter(a => a.completed).length;
+
+    // Course header
+    doc.setFillColor(...col);
+    doc.roundedRect(margin, y, contentW, 11, 2, 2, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+    doc.text(c.code + '  —  ' + c.name, margin + 4, y + 7.5);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    doc.text(done + '/' + cA.length + ' complete', pageW - margin - 4, y + 7.5, { align: 'right' });
+    y += 13;
+
+    // Assignment rows
+    cA.forEach(a => {
+      checkY(8);
+      const bg = a.completed ? [228, 245, 228] : [248, 246, 243];
+      doc.setFillColor(...bg);
+      doc.rect(margin, y, contentW, 7.5, 'F');
+      doc.setDrawColor(...LGRAY); doc.setLineWidth(0.2);
+      doc.rect(margin, y, contentW, 7.5, 'S');
+      // colored left stripe
+      doc.setFillColor(...col);
+      doc.rect(margin, y, 2.5, 7.5, 'F');
+      doc.setTextColor(...DARK);
+      doc.setFont('helvetica', a.completed ? 'italic' : 'normal'); doc.setFontSize(9);
+      const label = (a.completed ? '✓  ' : '   ') + a.name;
+      doc.text(label, margin + 5, y + 5.2, { maxWidth: contentW - 28 });
+      if (a.due_date) {
+        doc.setFont('helvetica', 'normal'); doc.setTextColor(...GRAY); doc.setFontSize(8);
+        const ds = new Date(a.due_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        doc.text(ds, pageW - margin - 3, y + 5.2, { align: 'right' });
+      }
+      y += 8;
+    });
+    y += 5;
+  });
+
+  // ── READINGS SUMMARY ──
+  checkY(16);
+  doc.setFillColor(30, 30, 40);
+  doc.roundedRect(margin, y, contentW, 11, 2, 2, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+  doc.text('Readings', margin + 4, y + 7.5);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+  doc.text(readR + ' of ' + totalR + ' complete', pageW - margin - 4, y + 7.5, { align: 'right' });
+  y += 14;
+
+  const readCols = [GARNET, GOLD, BLUE];
+  semCourses.forEach((c, ci) => {
+    const cReads = readings.filter(r => r.course_id === c.id);
+    if (!cReads.length) return;
+    checkY(10);
+    const col = readCols[ci] || GARNET;
+    doc.setFillColor(...col.map(v => Math.min(255, v + 60)));
+    doc.roundedRect(margin, y, contentW, 8, 1, 1, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+    doc.text(c.code, margin + 4, y + 5.5);
+    doc.setFont('helvetica', 'normal');
+    const cDone = cReads.filter(r => r.is_read).length;
+    doc.text(cDone + '/' + cReads.length + ' read', pageW - margin - 4, y + 5.5, { align: 'right' });
+    y += 9;
+    cReads.forEach(r => {
+      checkY(8);
+      doc.setFillColor(r.is_read ? 230 : 248, r.is_read ? 245 : 246, r.is_read ? 230 : 248);
+      doc.rect(margin, y, contentW, 7, 'F');
+      doc.setFillColor(...col);
+      doc.rect(margin, y, 2.5, 7, 'F');
+      doc.setTextColor(...DARK);
+      doc.setFont('helvetica', r.is_read ? 'italic' : 'normal'); doc.setFontSize(8.5);
+      doc.text((r.is_read ? '✓  ' : '   ') + r.title, margin + 5, y + 4.8, { maxWidth: contentW - 24 });
+      if (r.week_label) {
+        doc.setTextColor(...GRAY); doc.setFontSize(7.5);
+        doc.text(r.week_label, pageW - margin - 3, y + 4.8, { align: 'right' });
+      }
+      y += 7.5;
+    });
+    y += 4;
+  });
+
+  // ── RESEARCH NOTES ──
+  if (notes.length) {
+    newPage();
+    doc.setFillColor(30, 30, 40);
+    doc.roundedRect(margin, y, contentW, 11, 2, 2, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+    doc.text('Research Notes', margin + 4, y + 7.5);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    doc.text(notes.length + ' total', pageW - margin - 4, y + 7.5, { align: 'right' });
+    y += 14;
+
+    const sorted = [...notes].sort((a,b) => new Date(b.updated_at||b.created_at) - new Date(a.updated_at||a.created_at));
+    sorted.forEach(n => {
+      const nc = n.course_id ? courseById(n.course_id) : null;
+      const ci = nc ? semCourses.findIndex(c => c.id === nc.id) : -1;
+      const col = ci >= 0 ? courseColors[ci] : [80, 80, 90];
+      const bodyLines = doc.splitTextToSize((n.body || '').replace(/[\r\n]+/g, ' '), contentW - 8);
+      const blockH = 8 + Math.min(bodyLines.length, 6) * 4.5 + (n.tags ? 5 : 0);
+      checkY(blockH + 4);
+
+      doc.setFillColor(250, 248, 245);
+      doc.setDrawColor(...LGRAY); doc.setLineWidth(0.3);
+      doc.roundedRect(margin, y, contentW, blockH, 2, 2, 'FD');
+      doc.setFillColor(...col);
+      doc.roundedRect(margin, y, 3, blockH, 2, 2, 'F');
+
+      // Title line
+      doc.setTextColor(...DARK); doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+      doc.text(n.title || 'Untitled', margin + 6, y + 5.5, { maxWidth: contentW - 50 });
+
+      // Date + course + module
+      const dt = new Date(n.updated_at || n.created_at);
+      const meta = [
+        nc ? nc.code : '',
+        n.module_label || '',
+        dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      ].filter(Boolean).join('  ·  ');
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(...GRAY); doc.setFontSize(7.5);
+      doc.text(meta, pageW - margin - 4, y + 5.5, { align: 'right' });
+
+      // Body text
+      doc.setTextColor(...DARK); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+      const visLines = bodyLines.slice(0, 6);
+      visLines.forEach((line, li) => {
+        doc.text(line, margin + 6, y + 10 + li * 4.5);
+      });
+      if (bodyLines.length > 6) {
+        doc.setTextColor(...GRAY); doc.setFontSize(8);
+        doc.text('…', margin + 6, y + 10 + 6 * 4.5);
+      }
+
+      // Tags
+      if (n.tags) {
+        doc.setTextColor(...GRAY); doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5);
+        doc.text(n.tags, margin + 6, y + blockH - 2);
+      }
+
+      y += blockH + 4;
+    });
+  }
+
+  // ── MILESTONES ──
+  if (milestones.length) {
+    checkY(20);
+    doc.setFillColor(30, 30, 40);
+    doc.roundedRect(margin, y, contentW, 11, 2, 2, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+    doc.text('Dissertation Milestones', margin + 4, y + 7.5);
+    y += 14;
+    milestones.forEach(m => {
+      checkY(9);
+      const bg = m.completed ? [228, 245, 228] : [248, 246, 243];
+      doc.setFillColor(...bg);
+      doc.roundedRect(margin, y, contentW, 8, 1, 1, 'F');
+      doc.setFillColor(m.completed ? 34 : 180, m.completed ? 160 : 180, m.completed ? 34 : 180);
+      doc.roundedRect(margin, y, 3, 8, 1, 1, 'F');
+      doc.setTextColor(...DARK); doc.setFont('helvetica', m.completed ? 'bold' : 'normal'); doc.setFontSize(9);
+      doc.text((m.completed ? '✓  ' : '○  ') + m.name, margin + 6, y + 5.5);
+      if (m.target_date) {
+        doc.setTextColor(...GRAY); doc.setFontSize(8);
+        doc.text(new Date(m.target_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), pageW - margin - 3, y + 5.5, { align: 'right' });
+      }
+      y += 9;
+    });
+  }
+
+  // ── FOOTERS ──
+  const totalPages = doc.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    doc.setFillColor(...GARNET);
+    doc.rect(0, 287, pageW, 10, 'F');
+    doc.setFillColor(...GOLD);
+    doc.rect(0, 287, pageW, 1.2, 'F');
+    doc.setTextColor(210, 185, 140); doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
+    doc.text('FSU Learning Design & Performance Technology  ·  Ed.D. Dashboard', margin, 293);
+    doc.text('Page ' + p + ' of ' + totalPages, pageW - margin, 293, { align: 'right' });
+  }
+
+  doc.save('FSU_Progress_' + (curSem.name || 'semester').replace(/\s+/g, '-') + '.pdf');
+  showToast('PDF downloaded!');
+}
+// ── IMPORT READINGS FROM CANVAS ──────────────────
+let importParsed = [];
+
+function openImportReadings() {
+  // Populate course dropdown
+  const sel = document.getElementById('importCourse');
+  sel.innerHTML = courses.map(c => `<option value="${c.id}">${c.code} — ${c.name}</option>`).join('');
+  // Reset to step 1
+  document.getElementById('importText').value = '';
+  document.getElementById('importWeekLabel').value = '';
+  document.getElementById('importStep1').style.display = 'block';
+  document.getElementById('importStep2').style.display = 'none';
+  importParsed = [];
+  openModal('modalImport');
+}
+
+function backToImportStep1() {
+  document.getElementById('importStep1').style.display = 'block';
+  document.getElementById('importStep2').style.display = 'none';
+}
+
+function parseImport() {
+  const raw = document.getElementById('importText').value.trim();
+  if (!raw) { showToast('Paste some text first'); return; }
+
+  const courseId = document.getElementById('importCourse').value;
+  const weekLabel = document.getElementById('importWeekLabel').value.trim();
+
+  // Split into blocks — blank lines separate citations, or treat each non-empty line as a citation
+  // First try splitting on double newlines (paragraph mode)
+  let blocks = raw.split(/\n{2,}/).map(b => b.replace(/\n/g, ' ').trim()).filter(b => b.length > 10);
+  // If that only gives 1 block, try single lines
+  if (blocks.length <= 1) {
+    blocks = raw.split('\n').map(b => b.trim()).filter(b => b.length > 10);
+  }
+
+  importParsed = blocks.map(block => parseCitation(block, courseId, weekLabel));
+
+  if (!importParsed.length) { showToast('No citations detected — try adjusting the text'); return; }
+
+  // Show preview
+  document.getElementById('importCount').textContent = importParsed.length;
+  renderImportPreview();
+  document.getElementById('importStep1').style.display = 'none';
+  document.getElementById('importStep2').style.display = 'block';
+}
+
+function parseCitation(text, courseId, weekLabel) {
+  // Strip leading bullets, numbers, dashes
+  text = text.replace(/^[\s\-•·\*\d]+\.?\s*/, '').trim();
+
+  // Extract URL / DOI
+  let url = null;
+  const doiMatch = text.match(/(?:doi:|https?:\/\/doi\.org\/)([^\s]+)/i);
+  const urlMatch = text.match(/https?:\/\/[^\s]+/);
+  if (doiMatch) {
+    url = 'https://doi.org/' + doiMatch[1].replace(/[.,;)]+$/, '');
+  } else if (urlMatch) {
+    url = urlMatch[0].replace(/[.,;)]+$/, '');
+  }
+
+  // Extract year
+  const yearMatch = text.match(/\((\d{4}[a-z]?)\)/);
+  const year = yearMatch ? yearMatch[1] : null;
+
+  // Try to extract title — text between year/authors and journal name
+  // Pattern: Authors (year). Title. Journal...
+  // OR: Authors (year). Title [link text]. Journal...
+  let title = '';
+  let citation = text;
+
+  // Remove URL from display text for cleaner title extraction
+  const cleanText = text.replace(/https?:\/\/[^\s]+/g, '').replace(/\s+/g, ' ').trim();
+
+  // Try APA pattern: everything after (year). up to the next . that's followed by italic/journal signal
+  // Heuristic: title is between first "). " and the next ". " before volume/journal info
+  const afterYear = yearMatch ? cleanText.slice(cleanText.indexOf(yearMatch[0]) + yearMatch[0].length).replace(/^\.\s*/, '') : cleanText;
+
+  // Title ends at: period before journal (detected by volume pattern, doi, or Eds.)
+  // Signals of journal/book info: volume numbers like 50(1), In Eds., pp., doi:
+  const titleEndPattern = /\.\s+(?=[A-Z][^.]+(?:,\s*\d+|In\s|pp\.\s|\(Eds|doi:))/;
+  const titleEndMatch = afterYear.match(titleEndPattern);
+  if (titleEndMatch) {
+    title = afterYear.slice(0, titleEndMatch.index).trim();
+    // Clean up link artifacts like "↓" or "[PDF]"
+    title = title.replace(/[↓→↑↔]/g, '').replace(/\[PDF\]/gi, '').trim();
+    // Remove trailing period
+    title = title.replace(/\.$/, '').trim();
+  } else {
+    // Fallback: take first sentence after year
+    const firstDot = afterYear.indexOf('. ');
+    title = firstDot > 0 ? afterYear.slice(0, firstDot) : afterYear.slice(0, 120);
+    title = title.replace(/[↓→↑↔]/g, '').replace(/\[PDF\]/gi, '').trim().replace(/\.$/, '');
+  }
+
+  // If title still looks like just authors or is empty, use first 100 chars of clean text
+  if (!title || title.length < 5) {
+    title = cleanText.slice(0, 100).replace(/\.$/, '');
+  }
+
+  // Clean full citation — remove download arrows and other Canvas artifacts
+  citation = text.replace(/[↓→↑↔]/g, '').replace(/\s+/g, ' ').trim();
+
+  return { title, citation, url, courseId, weekLabel, _raw: text };
+}
+
+function renderImportPreview() {
+  const list = document.getElementById('importPreviewList');
+  const c = courses.find(x => x.id === importParsed[0]?.courseId);
+  list.innerHTML = importParsed.map((r, i) => `
+    <div style="padding:12px 14px;border-bottom:1px solid var(--border);${i===importParsed.length-1?'border-bottom:none':''}" id="importRow${i}">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="flex:1">
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;flex-wrap:wrap">
+            <input type="text" value="${escHtml(r.title)}" id="importTitle${i}"
+              style="font-size:13px;font-weight:600;border:none;background:transparent;padding:0;width:100%;color:var(--text)"
+              placeholder="Title" oninput="importParsed[${i}].title=this.value">
+          </div>
+          <div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:4px">${escHtml(r.citation.slice(0,180))}${r.citation.length>180?'…':''}</div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            ${r.weekLabel ? `<span class="tag tag-gray" style="font-size:10px">${escHtml(r.weekLabel)}</span>` : ''}
+            ${r.url ? `<span style="font-size:11px;color:#1e62c2"><i class="ti ti-link" style="font-size:11px"></i> ${escHtml(r.url.slice(0,50))}${r.url.length>50?'…':''}</span>` : ''}
+          </div>
+        </div>
+        <button onclick="removeImportRow(${i})" style="flex-shrink:0;width:24px;height:24px;border-radius:6px;border:none;background:var(--surface2);color:var(--text3);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function removeImportRow(i) {
+  importParsed.splice(i, 1);
+  document.getElementById('importCount').textContent = importParsed.length;
+  renderImportPreview();
+}
+
+async function confirmImport() {
+  if (!importParsed.length) { showToast('Nothing to add'); return; }
+  let added = 0;
+  for (const r of importParsed) {
+    if (!r.title) continue;
+    const exists = readings.some(x => x.course_id === r.courseId && x.title.toLowerCase().trim() === r.title.toLowerCase().trim());
+    if (exists) continue;
+    const result = await sb('POST', 'readings', {
+      title: r.title,
+      citation: r.citation,
+      url: r.url || null,
+      course_id: r.courseId,
+      week_label: r.weekLabel || null,
+      is_read: false
+    });
+    readings.push(result[0]);
+    added++;
+  }
+  closeModal('modalImport');
+  renderReadings();
+  showToast(added > 0 ? `Added ${added} reading${added!==1?'s':''}!` : 'No new readings — all already existed.');
+}
+
+// ── SYNC MISSING READINGS ────────────────────────
+async function syncMissingReadings() {
+  showToast('Checking for missing readings…');
+  let added = 0;
+  for (const r of SEED.readings) {
+    const c = courses.find(x => x.code === r.course_code);
+    if (!c) continue;
+    const { course_code, ...rest } = r;
+    // Check if a reading with this exact title already exists for this course
+    const exists = readings.some(x => x.course_id === c.id && x.title === r.title);
+    if (!exists) {
+      const result = await sb('POST', 'readings', { ...rest, course_id: c.id, is_read: false });
+      readings.push(result[0]);
+      added++;
+    }
+  }
+  renderReadings();
+  showToast(added > 0 ? `Added ${added} new reading${added > 1 ? 's' : ''}!` : 'All readings already up to date.');
+}
+
+// ── STARTUP ──────────────────────────────────────
+(function init() {
+  SB_URL = localStorage.getItem('sb_url') || '';
+  SB_KEY = localStorage.getItem('sb_key') || '';
+  if (SB_URL && SB_KEY) {
+    launch();
+  } else {
+    document.getElementById('setupScreen').style.display = 'flex';
+    initDark();
+  }
+})();
+</script>
+</body>
+</html>
