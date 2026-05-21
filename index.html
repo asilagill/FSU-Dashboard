@@ -536,6 +536,28 @@ label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; 
         <tbody id="assignBody"></tbody>
       </table>
     </div>
+    <div id="assignCompletedSection" style="display:none;margin-top:24px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer" onclick="toggleCompletedVisible()">
+        <div class="section-title" style="margin-bottom:0"><i class="ti ti-circle-check"></i> Completed</div>
+        <span id="assignCompletedCount" class="tag tag-gray" style="font-size:11px"></span>
+        <i class="ti ti-chevron-down" id="assignCompletedChevron" style="font-size:16px;color:var(--text3);margin-left:auto;transition:transform .2s"></i>
+      </div>
+      <div id="assignCompletedWrap">
+        <div class="card" style="padding:0;overflow:hidden">
+          <table class="tbl">
+            <thead><tr>
+              <th style="width:36px"></th>
+              <th>Assignment</th>
+              <th class="hide-mobile">Course</th>
+              <th class="hide-mobile">Due</th>
+              <th class="hide-mobile">Weight</th>
+              <th style="width:60px"></th>
+            </tr></thead>
+            <tbody id="assignCompletedBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- READINGS PAGE -->
@@ -1262,17 +1284,40 @@ function renderAssignments() {
     return new Date(a.due_date) - new Date(b.due_date);
   });
 
-  document.getElementById('assignBody').innerHTML = list.map(a => {
+  const pending   = list.filter(a => !a.completed);
+  const completed = list.filter(a => a.completed);
+
+  function assignRow(a) {
     const c = courseById(a.course_id);
-    return `<tr class="${a.completed ? 'completed-row' : ''}">
+    return `<tr>
       <td><div class="check-circle ${a.completed ? 'done' : ''}" onclick="toggleAssign('${a.id}')"></div></td>
-      <td><span class="dl-name">${a.name}</span></td>
+      <td><span class="dl-name" style="${a.completed ? 'opacity:.55;text-decoration:line-through' : ''}">${a.name}</span></td>
       <td class="hide-mobile">${courseTag(c)}</td>
-      <td class="hide-mobile">${fmtDate(a.due_date)}</td>
-      <td class="hide-mobile">${a.weight ? a.weight + '%' : '—'}</td>
+      <td class="hide-mobile" style="${a.completed ? 'opacity:.55' : ''}">${fmtDate(a.due_date)}</td>
+      <td class="hide-mobile" style="${a.completed ? 'opacity:.55' : ''}">${a.weight ? a.weight + '%' : '—'}</td>
       <td><button class="btn btn-secondary btn-sm btn-icon" onclick="editAssignment('${a.id}')"><i class="ti ti-pencil"></i></button></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">No assignments yet</td></tr>';
+  }
+
+  document.getElementById('assignBody').innerHTML =
+    pending.map(assignRow).join('') ||
+    '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">No pending assignments</td></tr>';
+
+  const sec = document.getElementById('assignCompletedSection');
+  if (completed.length) {
+    sec.style.display = 'block';
+    document.getElementById('assignCompletedCount').textContent = completed.length + ' done';
+    document.getElementById('assignCompletedBody').innerHTML = completed.map(assignRow).join('');
+  } else {
+    sec.style.display = 'none';
+  }
+}
+
+let _completedVisible = true;
+function toggleCompletedVisible() {
+  _completedVisible = !_completedVisible;
+  document.getElementById('assignCompletedWrap').style.display = _completedVisible ? 'block' : 'none';
+  document.getElementById('assignCompletedChevron').style.transform = _completedVisible ? '' : 'rotate(-90deg)';
 }
 
 function setAssignFilter(f) { currentCourseFilter = f === 'All' ? 'all' : f; renderAssignments(); }
