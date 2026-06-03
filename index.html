@@ -6,105 +6,149 @@
 <title>FSU · Ed.D. Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400;1,700&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400;1,700&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
 :root {
-  --garnet: #782F40;
-  --garnet-dark: #5a1f2e;
-  --garnet-light: #a84458;
-  --garnet-pale: #f9edef;
-  --gold: #CEB888;
-  --gold-dark: #b8a070;
-  --gold-light: #e8d9b4;
-  --bg: #F4F1ED;
-  --surface: #ffffff;
-  --surface2: #ede9e3;
-  --border: #d4cfc8;
-  --text: #1e1c18;
-  --text2: #5a5750;
-  --text3: #8a8780;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --shadow-sm: 0 1px 3px rgba(120,47,64,0.08);
-  --shadow-md: 0 4px 12px rgba(120,47,64,0.12);
-  --nav-h: 60px;
+  --pink:       #FF2D78;
+  --pink-dim:   #cc1f5e;
+  --pink-glow:  rgba(255,45,120,0.18);
+  --teal:       #00C9A7;
+  --teal-dim:   #009e85;
+  --teal-glow:  rgba(0,201,167,0.15);
+  --gold:       #FFB830;
+  --surface:    rgba(255,255,255,0.05);
+  --surface2:   rgba(255,255,255,0.08);
+  --surface3:   rgba(255,255,255,0.12);
+  --border:     rgba(255,255,255,0.1);
+  --border2:    rgba(255,255,255,0.18);
+  --text:       #f0eaf4;
+  --text2:      rgba(240,234,244,0.65);
+  --text3:      rgba(240,234,244,0.38);
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+  --nav-h:      58px;
 }
-[data-theme="dark"] {
-  --bg: #0f0f11;
-  --surface: #1a1a1f;
-  --surface2: #222228;
-  --border: #32323c;
-  --text: #f0f0f4;
-  --text2: #a8a8b8;
-  --text3: #66667a;
-  --garnet-pale: #2a1020;
-  --gold-light: #2a2410;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.6);
+
+/* light mode — keep things readable without the dark bg */
+[data-theme="light"] {
+  --surface:    rgba(0,0,0,0.04);
+  --surface2:   rgba(0,0,0,0.06);
+  --surface3:   rgba(0,0,0,0.1);
+  --border:     rgba(0,0,0,0.1);
+  --border2:    rgba(0,0,0,0.18);
+  --text:       #1a0820;
+  --text2:      rgba(26,8,32,0.65);
+  --text3:      rgba(26,8,32,0.4);
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; transition: background .2s, color .2s; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: #0d0618;
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* mesh gradient background */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 0% 0%,   rgba(120,20,160,0.55) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 100% 0%,  rgba(180,20,80,0.4)  0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 100% 100%,rgba(0,120,100,0.35) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 0% 100%,  rgba(20,20,80,0.5)   0%, transparent 50%),
+    #0d0618;
+}
+
+[data-theme="light"] body::before {
+  background:
+    radial-gradient(ellipse 70% 50% at 0% 0%,   rgba(200,100,220,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 0%,  rgba(255,45,120,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 100% 100%,rgba(0,180,150,0.12) 0%, transparent 55%),
+    #f4eef8;
+}
+
+[data-theme="light"] body { background: #f4eef8; }
 
 /* ── TOP NAV ── */
 .topnav {
   position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
-  background: var(--garnet-dark);
+  background: #0d0618;
   display: flex; align-items: center; padding: 0 20px;
   z-index: 200; gap: 8px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .topnav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
-.topnav-logo { width: 32px; height: 32px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-.topnav-logo i { font-size: 17px; color: var(--garnet-dark); }
-.topnav-title { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -.2px; }
-.topnav-title span { color: var(--gold); }
-.topnav-links { display: flex; align-items: center; gap: 2px; margin-left: 24px; flex: 1; }
-.topnav-links a {
-  padding: 6px 12px; border-radius: 8px; color: rgba(255,255,255,0.7);
-  text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px;
-  transition: background .15s, color .15s; white-space: nowrap;
+.topnav-logo {
+  width: 30px; height: 30px;
+  background: linear-gradient(135deg, var(--pink), var(--gold));
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
 }
-.topnav-links a:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.topnav-links a.active { background: rgba(206,184,136,0.2); color: var(--gold); }
-.topnav-links a i { font-size: 16px; }
+.topnav-logo i { font-size: 16px; color: #fff; }
+.topnav-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px; font-weight: 700; color: var(--text);
+  letter-spacing: .5px; text-transform: uppercase;
+}
+.topnav-title span { color: var(--pink); }
+.topnav-links { display: flex; align-items: center; gap: 1px; margin-left: 20px; flex: 1; }
+.topnav-links a {
+  padding: 5px 11px; border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.6); text-decoration: none;
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 5px;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.topnav-links a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.topnav-links a.active { background: var(--pink-glow); color: var(--pink); }
+.topnav-links a i { font-size: 15px; }
 .topnav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
 .dark-btn {
-  width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer;
-  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
-  display: flex; align-items: center; justify-content: center; font-size: 18px;
-  transition: background .15s;
+  width: 34px; height: 34px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  cursor: pointer; background: var(--surface); color: var(--text2);
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  transition: background .12s;
 }
-.dark-btn:hover { background: rgba(255,255,255,0.18); }
+.dark-btn:hover { background: var(--surface2); color: var(--text); }
 .hamburger {
-  display: none; width: 36px; height: 36px; border-radius: 8px; border: none;
-  cursor: pointer; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
-  align-items: center; justify-content: center; font-size: 20px;
+  display: none; width: 34px; height: 34px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); cursor: pointer;
+  background: var(--surface); color: var(--text2);
+  align-items: center; justify-content: center; font-size: 19px;
 }
 
 /* ── DRAWER ── */
-.drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; }
+.drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; }
 .drawer-overlay.open { display: block; }
 .drawer {
   position: fixed; top: 0; left: -280px; bottom: 0; width: 260px;
-  background: var(--garnet-dark); z-index: 310; transition: left .25s cubic-bezier(.19,1,.22,1);
+  background: #0d0618; border-right: 1px solid rgba(255,255,255,0.1);
+  z-index: 310; transition: left .25s cubic-bezier(.19,1,.22,1);
   display: flex; flex-direction: column; padding: 20px 0;
 }
 .drawer.open { left: 0; }
-.drawer-close { margin: 0 16px 16px; align-self: flex-start; width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer; background: rgba(255,255,255,0.1); color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center; }
-.drawer-links a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: rgba(255,255,255,0.75); text-decoration: none; font-size: 14px; font-weight: 500; transition: background .12s; }
-.drawer-links a:hover, .drawer-links a.active { background: rgba(255,255,255,0.1); color: #fff; }
-.drawer-links a.active { color: var(--gold); }
-.drawer-links a i { font-size: 18px; }
-.drawer-sep { height: 1px; background: rgba(255,255,255,0.08); margin: 10px 20px; }
-.drawer-dark { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 500; }
+.drawer-close { margin: 0 16px 16px; align-self: flex-start; width: 34px; height: 34px; border-radius: var(--radius-sm); border: 1px solid var(--border); cursor: pointer; background: var(--surface); color: var(--text2); font-size: 17px; display: flex; align-items: center; justify-content: center; }
+.drawer-links a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; font-weight: 500; transition: background .12s; }
+.drawer-links a:hover, .drawer-links a.active { background: var(--surface2); color: var(--text); }
+.drawer-links a.active { color: var(--pink); }
+.drawer-links a i { font-size: 17px; }
+.drawer-sep { height: 1px; background: var(--border); margin: 10px 20px; }
+.drawer-dark { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: var(--text2); font-size: 14px; font-weight: 500; }
 .toggle-switch { position: relative; width: 40px; height: 22px; margin-left: auto; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-track { position: absolute; inset: 0; border-radius: 11px; background: rgba(255,255,255,0.2); cursor: pointer; transition: background .2s; }
+.toggle-track { position: absolute; inset: 0; border-radius: 11px; background: var(--surface3); cursor: pointer; transition: background .2s; }
 .toggle-track:before { content:''; position: absolute; height: 16px; width: 16px; left: 3px; top: 3px; border-radius: 50%; background: #fff; transition: transform .2s; }
-input:checked + .toggle-track { background: var(--gold); }
+input:checked + .toggle-track { background: var(--pink); }
 input:checked + .toggle-track:before { transform: translateX(18px); }
 
 /* ── MAIN ── */
@@ -116,200 +160,208 @@ input:checked + .toggle-track:before { transform: translateX(18px); }
 
 /* ── PAGE HEADER ── */
 .page-header { margin-bottom: 24px; }
-.page-header h1 { font-size: 22px; font-weight: 700; color: var(--text); }
-.page-header p { color: var(--text2); font-size: 13px; margin-top: 2px; }
+.page-header h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 32px; font-weight: 700; color: var(--text);
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.page-header p { color: var(--text3); font-size: 13px; margin-top: 2px; }
 
 /* ── CARDS ── */
-.card { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 20px; box-shadow: var(--shadow-sm); }
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 20px;
+  backdrop-filter: blur(8px);
+}
 .card + .card { margin-top: 16px; }
 
 /* ── STAT GRID ── */
-.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-.stat-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; box-shadow: var(--shadow-sm); }
-.stat-num { font-size: 32px; font-weight: 800; color: var(--garnet); line-height: 1.1; }
-.stat-label { font-size: 12px; color: var(--text2); font-weight: 500; margin-top: 4px; }
-[data-theme="dark"] .stat-num { color: var(--gold); }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  backdrop-filter: blur(8px);
+}
+.stat-card::before { display: none; }
+.stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 36px; font-weight: 800; color: var(--text); line-height: 1;
+}
+.stat-label { font-size: 12px; color: var(--text3); font-weight: 500; margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
 
 /* ── COURSE GRID ── */
-.course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-.course-card { border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow-md); border: none; position: relative; overflow: hidden; }
-.course-card.c-garnet { background: linear-gradient(135deg, #8b1a2e 0%, #c2334f 100%); border: 2px solid #a0243f; }
-.course-card.c-gold   { background: linear-gradient(135deg, #7a5200 0%, #c48a00 100%); border: 2px solid #a06a00; }
-.course-card.c-blue   { background: linear-gradient(135deg, #0d3a80 0%, #1e62c2 100%); border: 2px solid #1450a8; }
-[data-theme="dark"] .course-card.c-garnet { background: linear-gradient(135deg, #6b1020 0%, #a82840 100%); border-color: #c03050; }
-[data-theme="dark"] .course-card.c-gold   { background: linear-gradient(135deg, #5a3a00 0%, #9a7000 100%); border-color: #b88000; }
-[data-theme="dark"] .course-card.c-blue   { background: linear-gradient(135deg, #0a2860 0%, #1848a0 100%); border-color: #2060c8; }
-.course-card .course-code { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
-.course-card .course-name { font-size: 15px; font-weight: 700; color: #fff; margin: 6px 0 14px; line-height: 1.3; }
-.course-card .course-meta { font-size: 12px; color: rgba(255,255,255,0.85); display: flex; flex-direction: column; gap: 5px; }
-.course-card .course-meta i { font-size: 13px; vertical-align: middle; margin-right: 5px; opacity: .8; }
-.course-card .course-meta a { color: rgba(255,255,255,0.85); text-decoration: underline; text-decoration-color: rgba(255,255,255,0.3); }
-.course-card .course-meta a:hover { color: #fff; }
+.course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+.course-card {
+  border-radius: var(--radius-lg); padding: 22px;
+  color: #fff; position: relative; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+/* orb */
+.course-card::after {
+  content: ''; position: absolute;
+  bottom: -40px; right: -40px;
+  width: 150px; height: 150px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+.course-card.c-garnet { background: linear-gradient(135deg, #2a0040 0%, #7a0060 50%, var(--pink) 100%); }
+.course-card.c-gold   { background: linear-gradient(135deg, #0a1a30 0%, #003870 50%, #1060c0 100%); }
+.course-card.c-blue   { background: linear-gradient(135deg, #001a20 0%, #006050 50%, var(--teal) 100%); }
+.course-code { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,0.55); }
+.course-name { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: #ffffff; margin: 6px 0 14px; line-height: 1.25; text-transform: uppercase; letter-spacing: .3px; }
+.course-meta { font-size: 12px; color: rgba(255,255,255,0.75); display: flex; flex-direction: column; gap: 4px; }
+.course-meta i { font-size: 12px; vertical-align: middle; margin-right: 5px; opacity: .7; }
+.course-meta a { color: rgba(255,255,255,0.75); text-decoration: underline; text-decoration-color: rgba(255,255,255,0.3); }
+.course-meta a:hover { color: #fff; }
 .course-progress { margin-top: 14px; }
-.course-progress-bar { height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; margin-top: 4px; }
-.course-progress-fill { height: 100%; background: rgba(255,255,255,0.7); border-radius: 2px; transition: width .4s; }
+.course-progress-bar { height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+.course-progress-fill { height: 100%; background: rgba(255,255,255,0.75); border-radius: 2px; transition: width .4s; }
 
-/* ── TWO COL ── */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+/* ── LAYOUT ── */
+.two-col   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 
 /* ── SECTION TITLE ── */
-.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: rgba(255,255,255,0.55);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
 .section-title i { font-size: 16px; }
 
 /* ── DEADLINE LIST ── */
 .deadline-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
 .deadline-item:last-child { border-bottom: none; }
-.dl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--garnet); }
-.dl-dot.soon { background: #f59e0b; }
-.dl-dot.overdue { background: #ef4444; }
-.dl-dot.ok { background: #22c55e; }
+.dl-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.dl-dot.soon    { background: var(--gold); }
+.dl-dot.overdue { background: var(--pink); }
+.dl-dot.ok      { background: var(--teal); }
 .dl-name { flex: 1; font-size: 13px; color: var(--text); font-weight: 500; }
 .dl-meta { font-size: 11px; color: var(--text3); }
-.dl-course-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--garnet-pale); color: var(--garnet); margin-left: 6px; }
-[data-theme="dark"] .dl-course-tag { background: rgba(206,184,136,0.15); color: var(--gold); }
+.dl-course-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--surface2); color: var(--text2); margin-left: 6px; }
 
-/* ── TABLES ── */
-.tbl { width: 100%; border-collapse: collapse; }
-.tbl th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text3); padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--border); }
-.tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
-.tbl tr:last-child td { border-bottom: none; }
-.tbl tr:hover td { background: var(--surface2); }
-.completed-row td { opacity: .5; }
-.completed-row td .dl-name { text-decoration: line-through; }
-
-/* ── CHECK CIRCLE ── */
-.check-circle {
-  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all .15s; flex-shrink: 0; background: var(--surface);
-}
-.check-circle:hover { border-color: var(--garnet); }
-.check-circle.done { background: var(--garnet); border-color: var(--garnet); }
-.check-circle.done.cc-garnet { background: #c2334f; border-color: #c2334f; }
-.check-circle.done.cc-gold   { background: #c48a00; border-color: #c48a00; }
-.check-circle.done.cc-blue   { background: #1e62c2; border-color: #1e62c2; }
-.check-circle.done::after { content: ''; width: 5px; height: 9px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translate(-1px,-1px); display: block; }
-[data-theme="dark"] .check-circle.done { background: var(--gold-dark); border-color: var(--gold-dark); }
 
 /* ── TAGS ── */
-.tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; }
-.tag-garnet { background: #f5dde2; color: #7a1830; font-weight: 700; border: 1.5px solid #c2334f; }
-.tag-gold   { background: #fdf0d0; color: #7a4800; font-weight: 700; border: 1.5px solid #c48a00; }
-.tag-blue   { background: #daeafc; color: #0d3a80; font-weight: 700; border: 1.5px solid #1e62c2; }
-.tag-green { background: #e8f5e4; color: #2e6e20; }
-.tag-gray { background: var(--surface2); color: var(--text2); }
-[data-theme="dark"] .tag-garnet { background: rgba(139,26,46,0.3); color: #ff9aaa; border: 1.5px solid #c2334f; }
-[data-theme="dark"] .tag-gold   { background: rgba(196,138,0,0.2);  color: #ffc840; border: 1.5px solid #c48a00; }
-[data-theme="dark"] .tag-blue   { background: rgba(30,98,194,0.25); color: #7ab8ff; border: 1.5px solid #1e62c2; }
-[data-theme="dark"] .tag-green { background: rgba(30,120,30,0.35); color: #80e880; }
-[data-theme="dark"] .tag-gray { background: var(--surface2); color: var(--text2); }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; width: fit-content; flex-shrink: 0; }
+.tag-garnet { background: rgba(255,45,120,0.2);  color: #ff6fa8;      border: 1px solid rgba(255,45,120,0.5); }
+.tag-gold   { background: rgba(30,130,255,0.2);  color: #70b8ff;      border: 1px solid rgba(30,130,255,0.5); }
+.tag-blue   { background: rgba(0,201,167,0.2);   color: #00d9b5;      border: 1px solid rgba(0,201,167,0.5); }
+.tag-green  { background: rgba(34,197,94,0.12);  color: #4ade80;      border: 1px solid rgba(34,197,94,0.25); }
+.tag-gray   { background: var(--surface2);       color: var(--text3); border: 1px solid var(--border); }
 
 /* ── FILTER BAR ── */
 .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
-.filter-btn { padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; font-family: 'Poppins', sans-serif; }
-.filter-btn:hover { border-color: var(--garnet); color: var(--garnet); }
-.filter-btn.active { background: var(--garnet); border-color: var(--garnet); color: #fff; }
-[data-theme="dark"] .filter-btn.active { background: var(--gold-dark); border-color: var(--gold-dark); color: var(--garnet-dark); }
+.filter-btn {
+  padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text2);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all .12s; font-family: 'Barlow', sans-serif; text-transform: uppercase; letter-spacing: .4px;
+}
+.filter-btn:hover { border-color: var(--pink); color: var(--pink); }
+.filter-btn.active { background: var(--pink-glow); border-color: var(--pink); color: var(--pink); }
 
 /* ── BUTTONS ── */
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; transition: all .15s; }
-.btn-primary { background: var(--garnet); color: #fff; }
-.btn-primary:hover { background: var(--garnet-light); }
-.btn-secondary { background: var(--surface2); color: var(--text); border: 1.5px solid var(--border); }
-.btn-secondary:hover { border-color: var(--garnet); color: var(--garnet); }
-.btn-gold { background: var(--gold); color: var(--garnet-dark); }
-.btn-gold:hover { background: var(--gold-dark); }
-.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; transition: all .12s; text-transform: uppercase; letter-spacing: .3px; }
+.btn-primary { background: var(--pink); color: #fff; }
+.btn-primary:hover { background: var(--pink-dim); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--pink); color: var(--pink); }
+.btn-gold { background: var(--gold); color: #1a0820; }
+.btn-gold:hover { background: #e8a020; }
+.btn-sm { padding: 4px 10px; font-size: 11px; }
 .btn-icon { padding: 6px; }
 
 /* ── FORM ELEMENTS ── */
 input, textarea, select {
-  font-family: 'Poppins', sans-serif; font-size: 13px;
+  font-family: 'Barlow', sans-serif; font-size: 13px;
   background: var(--surface); color: var(--text);
-  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
   padding: 8px 12px; width: 100%;
-  transition: border-color .15s;
+  transition: border-color .12s;
 }
-input:focus, textarea:focus, select:focus { outline: none; border-color: var(--garnet); }
-[data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select { background: var(--surface2); }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--pink); }
+option { background: #130920; }
 .form-row { display: grid; gap: 12px; margin-bottom: 12px; }
 .form-row.cols2 { grid-template-columns: 1fr 1fr; }
 .form-row.cols3 { grid-template-columns: 1fr 1fr 1fr; }
-label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; margin-bottom: 4px; }
+label { font-size: 11px; font-weight: 700; color: var(--text3); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .5px; }
 
 /* ── MODAL ── */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 400; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 400; align-items: center; justify-content: center; padding: 20px; }
 .modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border-radius: var(--radius-lg); padding: 28px; width: 100%; max-width: 520px; box-shadow: var(--shadow-md); max-height: 90vh; overflow-y: auto; }
-.modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.modal { background: #130920; border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 28px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+.modal h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: .5px; }
 .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 
 /* ── PROGRESS BARS ── */
-.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--garnet); border-radius: 3px; transition: width .4s; }
-[data-theme="dark"] .progress-fill { background: var(--gold-dark); }
+.progress-bar { height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--gold)); border-radius: 2px; transition: width .4s; }
 
 /* ── WEEK CARD ── */
-.week-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
-.week-card.current-week { border-color: var(--garnet); box-shadow: 0 0 0 2px rgba(120,47,64,0.15); }
-[data-theme="dark"] .week-card.current-week { border-color: var(--gold-dark); }
-.week-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text3); }
-.week-label { font-size: 15px; font-weight: 600; color: var(--text); margin: 2px 0 6px; }
+.week-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; backdrop-filter: blur(8px); }
+.week-card.current-week { border-color: var(--pink); box-shadow: 0 0 0 1px var(--pink-glow); }
+.week-num { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); }
+.week-label { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); margin: 2px 0 6px; text-transform: uppercase; }
 .week-dates { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
-.week-mins { font-size: 12px; font-weight: 600; color: var(--garnet); margin-bottom: 8px; }
-[data-theme="dark"] .week-mins { color: var(--gold); }
+.week-mins { font-size: 12px; font-weight: 600; color: var(--pink); margin-bottom: 8px; }
 .week-deadlines { font-size: 12px; color: var(--text2); }
 .week-dl-item { display: flex; align-items: flex-start; gap: 6px; padding: 3px 0; }
-.week-dl-item i { font-size: 13px; color: var(--garnet); flex-shrink: 0; margin-top: 1px; }
-[data-theme="dark"] .week-dl-item i { color: var(--gold); }
+.week-dl-item i { font-size: 13px; color: var(--teal); flex-shrink: 0; margin-top: 1px; }
 
-/* ── TODAY CARD ── */
-.today-section { margin-bottom: 24px; }
-.today-hero { background: linear-gradient(135deg, var(--garnet-dark) 0%, var(--garnet) 100%); border-radius: var(--radius-lg); padding: 24px; color: #fff; margin-bottom: 16px; }
-.today-hero h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-.today-hero p { font-size: 13px; opacity: .8; }
-.focus-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--surface); border-radius: var(--radius-md); margin-bottom: 8px; border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
-.focus-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.focus-icon.red    { background: #dc2626; color: #fff; }
-.focus-icon.amber  { background: #d97706; color: #fff; }
-.focus-icon.blue   { background: #2563eb; color: #fff; }
-.focus-icon.green  { background: #16a34a; color: #fff; }
-.focus-icon.purple { background: #7c3aed; color: #fff; }
-[data-theme="dark"] .focus-icon.red    { background: #b91c1c; }
-[data-theme="dark"] .focus-icon.amber  { background: #b45309; }
-[data-theme="dark"] .focus-icon.blue   { background: #1d4ed8; }
-[data-theme="dark"] .focus-icon.green  { background: #15803d; }
-[data-theme="dark"] .focus-icon.purple { background: #6d28d9; }
-.focus-icon i { font-size: 17px; }
-.focus-content { flex: 1; }
-.focus-content strong { font-size: 13px; font-weight: 700; color: var(--text); display: block; }
-.focus-content span { font-size: 12px; color: var(--text2); margin-top: 1px; display: block; }
+/* ── TODAY HERO ── */
+.today-hero {
+  background: linear-gradient(135deg, #1a0030 0%, #5a0048 35%, #900030 65%, #7a2000 100%);
+  border-radius: var(--radius-lg); padding: 26px; color: #fff; margin-bottom: 18px;
+  position: relative; overflow: hidden;
+  border: none;
+}
+.today-hero::before { display: none; }
+.today-hero h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .5px; color: #fff; }
+.today-hero p { font-size: 13px; opacity: .7; }
 
-/* ── DISCUSSION TRACKER ── */
+/* ── FOCUS ITEMS ── */
+.focus-item {
+  display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+  background: var(--surface); border-radius: var(--radius-md);
+  margin-bottom: 8px; border: 1px solid var(--border);
+  backdrop-filter: blur(8px); transition: border-color .12s;
+}
+.focus-item:hover { border-color: var(--border2); }
+.focus-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.focus-icon i { font-size: 16px; }
+.focus-icon.red    { background: rgba(239,68,68,0.2);  color: #f87171; }
+.focus-icon.amber  { background: rgba(245,158,11,0.2); color: var(--gold); }
+.focus-icon.blue   { background: rgba(0,201,167,0.15); color: var(--teal); }
+.focus-icon.green  { background: rgba(34,197,94,0.15); color: #4ade80; }
+.focus-icon.purple { background: rgba(255,45,120,0.15);color: var(--pink); }
+.focus-content strong { font-size: 14px; font-weight: 600; color: #ffffff; display: block; }
+.focus-content span { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+/* ── DISCUSSION ── */
 .disc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
-.disc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+.disc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; backdrop-filter: blur(8px); }
 .disc-week-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.disc-week-label { font-size: 14px; font-weight: 600; color: var(--text); }
+.disc-week-label { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); text-transform: uppercase; }
 .disc-deadline { font-size: 11px; color: var(--text3); }
 .disc-dots { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
-.disc-dot-btn { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text3); display: flex; align-items: center; justify-content: center; transition: all .15s; }
-.disc-dot-btn.filled { background: var(--garnet); border-color: var(--garnet); color: #fff; }
-[data-theme="dark"] .disc-dot-btn.filled { background: var(--gold-dark); border-color: var(--gold-dark); color: var(--garnet-dark); }
+.disc-dot-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text3); display: flex; align-items: center; justify-content: center; transition: all .12s; }
+.disc-dot-btn.filled { background: var(--pink); border-color: var(--pink); color: #fff; }
 .disc-status { font-size: 12px; font-weight: 600; }
-.disc-status.good { color: #22c55e; }
-.disc-status.warn { color: #f59e0b; }
-.disc-status.miss { color: #ef4444; }
-.disc-token { font-size: 11px; color: var(--text3); margin-top: 4px; }
-.disc-dropped { font-size: 11px; color: var(--text3); font-style: italic; }
+.disc-status.good { color: var(--teal); }
+.disc-status.warn { color: var(--gold); }
+.disc-status.miss { color: var(--pink); }
 
 /* ── NOTES ── */
 .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-.note-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; cursor: pointer; transition: box-shadow .15s; border-top: 3px solid var(--border); }
-.note-card:hover { box-shadow: var(--shadow-md); }
-.note-card.note-garnet { border-top-color: #c2334f; }
-.note-card.note-gold   { border-top-color: #c48a00; }
-.note-card.note-blue   { border-top-color: #1e62c2; }
+.note-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; cursor: pointer; transition: border-color .12s; backdrop-filter: blur(8px); }
+.note-card:hover { border-color: var(--border2); }
+.note-card.note-garnet { border-left: 3px solid var(--pink); }
+.note-card.note-gold   { border-left: 3px solid #60b0ff; }
+.note-card.note-blue   { border-left: 3px solid var(--teal); }
 .note-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
 .note-body { font-size: 12px; color: var(--text2); margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .note-footer { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
@@ -317,62 +369,74 @@ label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; 
 
 /* ── MILESTONE ── */
 .milestone-track { display: flex; flex-direction: column; gap: 12px; }
-.milestone-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; transition: border-color .15s; }
-.milestone-item:hover { border-color: var(--garnet); }
-.milestone-item.done { opacity: .7; }
-.milestone-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--garnet-pale); color: var(--garnet); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.milestone-item.done .milestone-icon { background: #dcfce7; color: #16a34a; }
-[data-theme="dark"] .milestone-icon { background: rgba(120,47,64,0.3); color: var(--gold); }
+.milestone-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; transition: border-color .12s; backdrop-filter: blur(8px); }
+.milestone-item:hover { border-color: var(--border2); }
+.milestone-item.done { opacity: .6; }
+.milestone-icon { width: 38px; height: 38px; border-radius: 9px; background: var(--surface2); color: var(--pink); display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.milestone-item.done .milestone-icon { background: rgba(0,201,167,0.15); color: var(--teal); }
 .milestone-name { font-size: 14px; font-weight: 600; color: var(--text); }
 .milestone-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
 .milestone-date { font-size: 11px; color: var(--text3); margin-top: 4px; }
 
 /* ── READING ROW ── */
-.reading-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); border-radius: 6px; transition: background .12s; }
+.reading-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); border-radius: 6px; transition: background .1s; }
 .reading-row:last-child { border-bottom: none; }
 .reading-row:hover { background: var(--surface2); }
 .reading-text { flex: 1; }
-.reading-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.reading-title { font-size: 13px; font-weight: 500; color: #ffffff; }
 .reading-citation { font-size: 11px; color: var(--text3); margin-top: 2px; }
-.reading-week { font-size: 11px; color: var(--text2); }
 
 /* ── CONNECTIONS ── */
-.conn-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; }
+.conn-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; backdrop-filter: blur(8px); }
 .conn-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
 .conn-courses { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
 .conn-desc { font-size: 13px; color: var(--text2); }
 
 /* ── APA BUILDER ── */
-.apa-output { background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 16px; font-size: 13px; color: var(--text); line-height: 1.8; min-height: 60px; word-break: break-word; }
-.apa-output em { font-style: italic; }
+.apa-output { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; font-size: 13px; color: var(--text); line-height: 1.8; min-height: 60px; word-break: break-word; }
 
 /* ── GRADE TABLE ── */
 .grade-input { width: 80px; padding: 4px 8px; font-size: 13px; text-align: center; }
-.grade-avg { font-size: 16px; font-weight: 700; color: var(--garnet); }
-[data-theme="dark"] .grade-avg { color: var(--gold); }
+.grade-avg { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: var(--pink); }
+
+/* ── CHECK CIRCLE ── */
+.check-circle { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .12s; flex-shrink: 0; background: transparent; }
+.check-circle:hover { border-color: var(--pink); }
+.check-circle.done { background: var(--pink); border-color: var(--pink); }
+.check-circle.done.cc-garnet { background: var(--pink);  border-color: var(--pink);  }
+.check-circle.done.cc-gold   { background: var(--gold);  border-color: var(--gold);  }
+.check-circle.done.cc-blue   { background: var(--teal);  border-color: var(--teal);  }
+.check-circle.done::after { content: ''; width: 5px; height: 9px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translate(-1px,-1px); display: block; }
+
+/* ── TABLES ── */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text3); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+.tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--surface2); }
+.completed-row td { opacity: .45; }
+.completed-row td .dl-name { text-decoration: line-through; }
 
 /* ── TOAST ── */
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--gray-800, #1e1d1a); color: #fff; padding: 10px 18px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500; opacity: 0; transform: translateY(12px); transition: all .2s; z-index: 500; pointer-events: none; }
+.toast { position: fixed; bottom: 24px; right: 24px; background: #1a0828; border: 1px solid var(--border2); color: var(--text); padding: 10px 18px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500; opacity: 0; transform: translateY(12px); transition: all .2s; z-index: 500; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
 
-/* ── CONNECTIONS CALLOUT ── */
-.callout { background: var(--gold-light); border-left: 4px solid var(--gold-dark); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--text); margin-bottom: 16px; }
-[data-theme="dark"] .callout { background: rgba(206,184,136,0.12); border-left-color: var(--gold); }
-
-/* ── SETUP SCREEN ── */
-.setup-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); padding: 20px; }
-.setup-card { background: var(--surface); border-radius: var(--radius-xl); padding: 40px; max-width: 440px; width: 100%; box-shadow: var(--shadow-md); text-align: center; }
-.setup-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-.setup-card p { color: var(--text2); font-size: 13px; margin-bottom: 28px; }
-.setup-field { text-align: left; margin-bottom: 14px; }
+/* ── CALLOUT ── */
+.callout { background: rgba(255,45,120,0.08); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--text); margin-bottom: 16px; }
 
 /* ── EXPORT ── */
 .export-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
 .export-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0; }
 .export-stat { text-align: center; }
-.export-stat-num { font-size: 32px; font-weight: 700; color: var(--garnet); }
-[data-theme="dark"] .export-stat-num { color: var(--gold); }
-.export-stat-label { font-size: 12px; color: var(--text2); }
+.export-stat-num { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 700; color: var(--pink); }
+.export-stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; }
+
+/* ── SETUP SCREEN ── */
+.setup-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.setup-card { background: rgba(255,255,255,0.05); border: 1px solid var(--border2); backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 40px; max-width: 440px; width: 100%; text-align: center; }
+.setup-card h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+.setup-card p { color: var(--text2); font-size: 13px; margin-bottom: 28px; }
+.setup-field { text-align: left; margin-bottom: 14px; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
@@ -398,13 +462,14 @@ label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; 
   .page { display: block !important; }
 }
 </style>
+
 </head>
 <body>
 
 <!-- SETUP SCREEN (shown until connected) -->
 <div id="setupScreen" class="setup-screen" style="display:none">
   <div class="setup-card">
-    <div style="width:52px;height:52px;background:var(--garnet);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+    <div style="width:52px;height:52px;background:linear-gradient(135deg,#FF2D78,#FFB830);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
       <i class="ti ti-school" style="font-size:26px;color:#fff"></i>
     </div>
     <h1>FSU Ed.D. Dashboard</h1>
@@ -478,22 +543,53 @@ label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; 
 
   <!-- TODAY PAGE -->
   <div class="page" id="page-today">
-    <div class="today-hero">
-      <h2 id="todayGreeting">Good morning!</h2>
-      <p id="todaySubtitle">Here's what needs your attention today.</p>
-    </div>
-    <div class="two-col">
-      <div>
-        <div class="section-title"><i class="ti ti-alert-circle"></i> Action Items</div>
-        <div id="todayActions"></div>
-      </div>
-      <div>
-        <div class="section-title"><i class="ti ti-book-open"></i> Suggested Reading</div>
-        <div id="todayReadings"></div>
-        <div class="section-title" style="margin-top:20px"><i class="ti ti-clock"></i> Reading Estimate</div>
-        <div id="todayReadEst" class="card" style="padding:14px"></div>
+
+    <!-- HERO: greeting + next deadline countdown -->
+    <div class="today-hero" style="margin-bottom:18px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap">
+        <div>
+          <h2 id="todayGreeting">Good morning!</h2>
+          <p id="todaySubtitle" style="margin-top:2px"></p>
+        </div>
+        <div id="todayCountdown" style="text-align:right;flex-shrink:0"></div>
       </div>
     </div>
+
+    <!-- ROW 1: Next up (focus) + Week at a glance -->
+    <div class="two-col" style="margin-bottom:16px">
+      <div>
+        <div class="section-title"><i class="ti ti-crosshair"></i> Next Up</div>
+        <div id="todayNextUp"></div>
+      </div>
+      <div>
+        <div class="section-title"><i class="ti ti-calendar"></i> This Week</div>
+        <div id="todayWeek" class="card" style="padding:14px 18px"></div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Reading queue + daily reflection -->
+    <div class="two-col" style="margin-bottom:16px">
+      <div>
+        <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:8px"><i class="ti ti-books"></i> Reading Queue</span>
+          <span id="todayReadProgress" style="font-size:11px;color:var(--text3);text-transform:none;letter-spacing:0;font-weight:500"></span>
+        </div>
+        <div id="todayReadQueue" class="card" style="padding:8px 0"></div>
+        <div id="todayReadBar" style="margin-top:10px"></div>
+      </div>
+      <div>
+        <div class="section-title"><i class="ti ti-writing"></i> Daily Reflection</div>
+        <div class="card" style="padding:16px">
+          <div id="todayPrompt" style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6;font-style:italic"></div>
+          <textarea id="todayReflectionText" rows="4" placeholder="Write your answer here — it saves as a research note..." style="resize:vertical;font-size:13px"></textarea>
+          <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+            <button class="btn btn-primary btn-sm" onclick="saveTodayReflection()"><i class="ti ti-notes"></i> Save to Notes</button>
+            <button class="btn btn-secondary btn-sm" onclick="newTodayPrompt()"><i class="ti ti-refresh"></i> New prompt</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- DASHBOARD / OVERVIEW PAGE -->
@@ -565,7 +661,8 @@ label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; 
     <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
       <div><h1>Readings</h1><p id="readProgress">Track your reading list</p></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-secondary btn-sm" onclick="syncMissingReadings()"><i class="ti ti-refresh"></i> Sync from syllabus</button>
+        <button class="btn btn-secondary btn-sm" onclick="syncMissingReadings()"><i class="ti ti-refresh"></i> Sync readings</button>
+        <button class="btn btn-secondary btn-sm" onclick="syncMissingAssignments()"><i class="ti ti-refresh"></i> Sync assignments</button>
         <button class="btn btn-gold btn-sm" onclick="openImportReadings()"><i class="ti ti-clipboard-text"></i> Import from Canvas</button>
         <button class="btn btn-primary btn-sm" onclick="openAddReading()"><i class="ti ti-plus"></i> Add Reading</button>
       </div>
@@ -793,9 +890,9 @@ label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; 
 <button id="floatNoteBtn" onclick="openAddNote()" title="Add a note" style="
   position:fixed; bottom:28px; right:28px; z-index:350;
   width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
-  background:var(--garnet); color:#fff; font-size:22px;
+  background:#033F40; color:#FFFAAC; font-size:22px;
   display:flex; align-items:center; justify-content:center;
-  box-shadow:0 4px 16px rgba(120,47,64,0.45); transition:transform .15s, box-shadow .15s;
+  box-shadow:0 4px 16px rgba(3,63,64,0.45); transition:transform .15s, box-shadow .15s;
 " onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -903,6 +1000,8 @@ const SEED = {
     { course_code:'EDG 6362', name:'Week 2 Discussion: Research as a Conversation', due_date:'2026-05-24', weight:10, type:'Discussion', notes:'Available May 18 · Due May 24 at 11:59pm' },
     { course_code:'EDG 6362', name:'Research Conversation Activity - Presentation', due_date:'2026-05-31', weight:15, type:'Presentation', notes:'Due May 31 at 11:59pm' },
     { course_code:'EDG 6362', name:'Research Conversation Activity - Annotated Bibliography', due_date:'2026-05-31', weight:15, type:'Assignment', notes:'Due May 31 at 11:59pm' },
+    { course_code:'EDG 6362', name:'Week 3 Discussion: Reading Research (Topics 1–5)', due_date:'2026-06-07', weight:10, type:'Discussion', notes:'5 topics: What did you read, Conceptual Frameworks, Peer Review, Voice, APA Style' },
+    { course_code:'EDG 6362', name:'Research Conversation Activity - Annotated Bibliography (2nd submission)', due_date:'2026-06-08', weight:15, type:'Assignment', notes:'Part 2 of Research Conversation Activity — due Sunday Week 3' },
     { course_code:'EDG 6362', name:'Token 1', due_date:null, weight:0, type:'Assignment', notes:'Undated — flexibility token' },
     // EME 6920
     { course_code:'EME 6920', name:'Citation Management Setup', due_date:'2026-05-20', weight:10, type:'Assignment' },
@@ -957,7 +1056,10 @@ const SEED = {
     // Week 2 — Older perspective (quick skim)
     { course_code:'EDG 6362', title:'Where do educational technologists really publish? An examination of successful emerging scholars\' publication outlets', citation:'Carr-Chellman, A. A. (2006). Where do educational technologists really publish? An examination of successful emerging scholars\' publication outlets. British Journal of Educational Technology, 37(1), 5-15. doi:10.1111/j.1467-8535.2005.00522.x', week_label:'Week 2 · Older Perspective' },
     { course_code:'EDG 6362', title:'Instructional systems design and the learning sciences: A citation analysis', citation:'Kirby, J., Hoadley, C., & Carr-Chellman, A. (2005). Instructional systems design and the learning sciences: A citation analysis. Educational Technology Research and Development, 53(1), 37-47. doi:10.1007/bf02504856', week_label:'Week 2 · Older Perspective' },
-    // Week 2 — Research approaches (reference point)
+    // Week 3 — Reading Research
+    { course_code:'EDG 6362', title:'Dennen, Bagdy & Ayan Karabatman (2024) — Navigating the high school to university transition with social media', citation:'Dennen, V. P., Bagdy, L. M., & Ayan Karabatman, H. (2024). Navigating the high school to university transition with social media: Intensity of use, sense of belonging, and meaningful change. Information and Learning Sciences, 125(10), 830–848. https://doi.org/10.1108/ILS-12-2023-0208', week_label:'Week 3 · Sample Article (Dennen et al.)', url:'https://doi.org/10.1108/ILS-12-2023-0208' },
+    { course_code:'EDG 6362', title:'Ravitch & Riggan (2017) — Reason & Rigor Ch. 3: Origins of a Conceptual Framework (The Birth of Grit)', citation:'Ravitch, S. M., & Riggan, M. (2017). Reason and rigor: How conceptual frameworks guide research (Ch. 3). SAGE.', week_label:'Week 3 · Core' },
+    { course_code:'EDG 6362', title:'APA Quick Reference Guide for Journal Articles, Books, and Edited Book Chapters (7th ed.)', citation:'American Psychological Association. (2026). Reference guide for journal articles, books, and edited book chapters. https://apastyle.apa.org/instructional-aids/reference-guide.pdf', week_label:'Week 3 · Reference', url:'https://apastyle.apa.org/instructional-aids/reference-guide.pdf' },
     { course_code:'EDG 6362', title:'Research designs', citation:'Ross, S. M., Morrison, G. R., Hannafin, R. D., Young, M., van den Akker, J., Kuiper, W., . . . Klein, J. D. (2008). Research designs. In J. M. Spector, M. D. Merrill, J. van Merrienboer & M. P. Driscoll (Eds.), Handbook of Research on Educational Communications and Technology (pp. 715-761). New York, NY: Routledge.', week_label:'Week 2 · Research Approaches' },
     { course_code:'EDG 6362', title:'Data collection and analysis', citation:'van Gog, T., Paas, F., Savenye, W., Robinson, R., Niemczyk, M., Atkinson, R., . . . Hancock, P. A. (2008). Data collection and analysis. In J. M. Spector, M. D. Merrill, J. van Merrienboer & M. P. Driscoll (Eds.), Handbook of Research on Educational Communications and Technology (pp. 763-806). New York, NY: Routledge.', week_label:'Week 2 · Research Approaches' },
 
@@ -1028,6 +1130,7 @@ async function launch() {
   document.getElementById('topnav').style.display = 'flex';
   document.getElementById('mainContent').style.display = 'block';
   await loadAll();
+  await syncCourseColors();
   if (!semesters.length) await seedData();
   initDark();
   nav('today');
@@ -1067,21 +1170,20 @@ async function seedData() {
 // ── DARK MODE ─────────────────────────────────────
 function initDark() {
   const saved = localStorage.getItem('darkMode');
-  const pref = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const dark = saved !== null ? saved === 'true' : pref;
+  const dark = saved !== null ? saved !== 'false' : true;
   applyDark(dark);
 }
 function toggleDarkMode() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  applyDark(!isDark);
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  applyDark(isLight); // if currently light, switch to dark; if dark (no attr), switch to light
 }
 function applyDark(dark) {
-  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-  localStorage.setItem('darkMode', dark);
+  document.documentElement.setAttribute('data-theme', dark ? '' : 'light');
+  localStorage.setItem('darkMode', String(dark));
   const btn = document.getElementById('darkBtn');
   if (btn) btn.innerHTML = dark ? '<i class="ti ti-sun"></i>' : '<i class="ti ti-moon"></i>';
   const tog = document.getElementById('darkToggleDrawer');
-  if (tog) tog.checked = dark;
+  if (tog) tog.checked = !dark;
 }
 
 // ── NAV ──────────────────────────────────────────
@@ -1116,7 +1218,7 @@ function closeDrawer() { document.getElementById('drawer').classList.remove('ope
 function courseById(id) { return courses.find(c => c.id === id) || {}; }
 function courseTag(c) {
   if (!c || !c.code) return '';
-  const color = c.color === 'gold' ? 'tag-gold' : c.color === 'blue' ? 'tag-blue' : 'tag-garnet';
+  const color = c.code.startsWith('EDG') ? 'tag-gold' : c.code.startsWith('EME') ? 'tag-blue' : 'tag-garnet';
   return `<span class="tag ${color}">${c.code}</span>`;
 }
 function fmtDate(d) {
@@ -1144,6 +1246,19 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 
 // ── TODAY ─────────────────────────────────────────
+const REFLECTION_PROMPTS = [
+  "What's the central argument of the last article you read?",
+  "How does your research question connect to your professional work right now?",
+  "What's one concept from this week's readings you'd push back on?",
+  "What gap in the literature is your study trying to fill?",
+  "What's your current working definition of your key construct?",
+  "What would a practitioner say is wrong with the research you've been reading?",
+  "What assumption is baked into your research question that you haven't examined yet?",
+  "If you had to explain your study to someone on the elevator, what would you say?",
+  "What's the most surprising thing you've learned this week?",
+  "What theory are you working with — and do you actually believe it?",
+];
+
 function renderToday() {
   const now = new Date();
   const hour = now.getHours();
@@ -1151,50 +1266,207 @@ function renderToday() {
   document.getElementById('todayGreeting').textContent = greet + '!';
   document.getElementById('todaySubtitle').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-  // Action items
-  const upcoming = assignments.filter(a => !a.completed && a.due_date)
+  const pending = assignments.filter(a => !a.completed && a.due_date)
     .sort((a,b) => new Date(a.due_date) - new Date(b.due_date));
-  const overdue = upcoming.filter(a => daysUntil(a.due_date) < 0);
-  const due3 = upcoming.filter(a => { const d = daysUntil(a.due_date); return d >= 0 && d <= 3; });
-  const due7 = upcoming.filter(a => { const d = daysUntil(a.due_date); return d > 3 && d <= 7; });
 
-  let html = '';
-  if (!overdue.length && !due3.length && !due7.length) {
-    html = '<div class="focus-item urgency-green"><div class="focus-icon green"><i class="ti ti-check"></i></div><div class="focus-content"><strong>All clear!</strong><span>No urgent deadlines in the next 7 days.</span></div></div>';
+  // ── COUNTDOWN: next deadline ──
+  const next = pending[0];
+  const cdEl = document.getElementById('todayCountdown');
+  if (next) {
+    const days = daysUntil(next.due_date);
+    const c = courseById(next.course_id);
+    const color = days < 0 ? 'var(--pink)' : days <= 2 ? '#FFB830' : 'var(--teal)';
+    const label = days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? 'due today' : days === 1 ? 'due tomorrow' : `${days} days`;
+    cdEl.innerHTML = `
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:42px;font-weight:800;color:${color};line-height:1">${days < 0 ? '-' : ''}${Math.abs(days)}<span style="font-size:18px;font-weight:600;margin-left:4px">${days === 0 ? 'today' : 'd'}</span></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:2px;text-align:right">${next.name}</div>
+      <div style="margin-top:4px;text-align:right">${courseTag(c)}</div>`;
+  } else {
+    cdEl.innerHTML = `<div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--teal)">All clear</div>`;
   }
-  overdue.forEach(a => {
-    const c = courseById(a.course_id);
-    html += `<div class="focus-item urgency-red"><div class="focus-icon red"><i class="ti ti-alert-triangle"></i></div><div class="focus-content"><strong>${a.name}</strong><span>OVERDUE · ${courseTag(c)}</span></div></div>`;
-  });
-  due3.forEach(a => {
-    const c = courseById(a.course_id);
-    html += `<div class="focus-item urgency-amber"><div class="focus-icon amber"><i class="ti ti-clock"></i></div><div class="focus-content"><strong>${a.name}</strong><span>Due ${fmtDate(a.due_date)} · ${courseTag(c)}</span></div></div>`;
-  });
-  due7.forEach(a => {
-    const c = courseById(a.course_id);
-    html += `<div class="focus-item urgency-blue"><div class="focus-icon blue"><i class="ti ti-calendar"></i></div><div class="focus-content"><strong>${a.name}</strong><span>Due ${fmtDate(a.due_date)} · ${courseTag(c)}</span></div></div>`;
-  });
-  document.getElementById('todayActions').innerHTML = html;
 
-  // Suggested readings
+  // ── NEXT UP: top 3 most urgent ──
+  const overdue = pending.filter(a => daysUntil(a.due_date) < 0);
+  const soon    = pending.filter(a => { const d = daysUntil(a.due_date); return d >= 0 && d <= 3; });
+  const later   = pending.filter(a => { const d = daysUntil(a.due_date); return d > 3 && d <= 7; });
+  const focus   = [...overdue, ...soon, ...later].slice(0, 4);
+
+  let nextHtml = '';
+  if (!focus.length) {
+    nextHtml = `<div class="focus-item"><div class="focus-icon green"><i class="ti ti-check"></i></div><div class="focus-content"><strong>Nothing urgent!</strong><span>You're ahead of the game.</span></div></div>`;
+  }
+  focus.forEach(a => {
+    const c = courseById(a.course_id);
+    const days = daysUntil(a.due_date);
+    const isOverdue = days < 0;
+    const isSoon = days >= 0 && days <= 2;
+    const iconType = isOverdue ? 'red' : isSoon ? 'amber' : 'blue';
+    const icon = isOverdue ? 'ti-alert-triangle' : isSoon ? 'ti-clock' : 'ti-calendar';
+    const dueStr = isOverdue ? `${Math.abs(days)}d overdue` : days === 0 ? 'Due today' : days === 1 ? 'Due tomorrow' : `Due ${fmtDate(a.due_date)}`;
+    nextHtml += `<div class="focus-item" style="cursor:pointer" onclick="nav('assignments')">
+      <div class="focus-icon ${iconType}"><i class="ti ${icon}"></i></div>
+      <div class="focus-content"><strong>${a.name}</strong>
+        <span>${dueStr} · ${courseTag(c)}</span>
+      </div>
+      <i class="ti ti-chevron-right" style="font-size:14px;color:var(--text3);flex-shrink:0"></i>
+    </div>`;
+  });
+  document.getElementById('todayNextUp').innerHTML = nextHtml;
+
+  // ── THIS WEEK ──
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay() + 1);
+  const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+  const weekAssign = pending.filter(a => {
+    const d = new Date(a.due_date + 'T12:00:00');
+    return d >= weekStart && d <= weekEnd;
+  });
+  const weekReads = readings.filter(r => !r.is_read);
+  const semStart = new Date('2026-05-12');
+  const semEnd   = new Date('2026-08-01');
+  const semTotal = (semEnd - semStart) / 86400000;
+  const semDone  = (now - semStart) / 86400000;
+  const semPct   = Math.min(100, Math.max(0, Math.round(semDone / semTotal * 100)));
+  const daysLeft = Math.max(0, Math.ceil((semEnd - now) / 86400000));
+
+  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const todayDow = now.getDay() === 0 ? 6 : now.getDay() - 1;
+  const dayDots = dayNames.map((d, i) => {
+    const dayDate = new Date(weekStart); dayDate.setDate(weekStart.getDate() + i);
+    const hasDue = pending.some(a => {
+      const dd = new Date(a.due_date + 'T12:00:00');
+      return dd.toDateString() === dayDate.toDateString();
+    });
+    const isToday = i === todayDow;
+    const isPast = i < todayDow;
+    return `<div style="flex:1;text-align:center">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${isToday ? 'var(--pink)' : isPast ? 'var(--text3)' : 'var(--text2)'};margin-bottom:4px">${d}</div>
+      <div style="width:28px;height:28px;border-radius:50%;margin:0 auto;
+        background:${isToday ? 'var(--pink)' : isPast ? 'var(--surface2)' : 'var(--surface)'};
+        border:1px solid ${isToday ? 'var(--pink)' : hasDue ? '#FFB830' : 'var(--border)'};
+        display:flex;align-items:center;justify-content:center">
+        ${hasDue ? `<div style="width:6px;height:6px;border-radius:50%;background:${isToday ? '#fff' : '#FFB830'}"></div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('todayWeek').innerHTML = `
+    <div style="display:flex;gap:4px;margin-bottom:14px">${dayDots}</div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;color:var(--text3)">This week</span>
+        <span style="font-size:13px;font-weight:600;color:var(--text)">${weekAssign.length} deadline${weekAssign.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;color:var(--text3)">Unread</span>
+        <span style="font-size:13px;font-weight:600;color:var(--text)">${weekReads.length} readings</span>
+      </div>
+      <div style="margin-top:4px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:11px;color:var(--text3)">Semester progress</span>
+          <span style="font-size:11px;color:var(--text3)">${daysLeft}d left</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${semPct}%"></div></div>
+      </div>
+    </div>`;
+
+  // ── READING QUEUE: next 5 unread, sorted by urgency ──
   const unread = readings.filter(r => !r.is_read);
-  const suggest = unread.slice(0, 3);
-  let rhtml = '';
-  suggest.forEach(r => {
+  // sort: readings with a closer inferred due date first
+  const withDue = unread.map(r => {
     const c = courseById(r.course_id);
-    rhtml += `<div class="focus-item urgency-purple"><div class="focus-icon purple"><i class="ti ti-book-open"></i></div><div class="focus-content"><strong>${r.title}</strong><span>${r.week_label || ''} · ${courseTag(c)}</span></div></div>`;
-  });
-  if (!suggest.length) rhtml = '<div class="focus-item urgency-green"><div class="focus-icon green"><i class="ti ti-check"></i></div><div class="focus-content"><strong>All readings complete!</strong><span>Nothing left unread.</span></div></div>';
-  document.getElementById('todayReadings').innerHTML = rhtml;
+    const d = inferReadingDueDate(c ? c.id : null, r.week_label);
+    return { ...r, _inferredDue: d ? new Date(d + 'T12:00:00') : new Date('2099-01-01') };
+  }).sort((a,b) => a._inferredDue - b._inferredDue);
+  const queue = withDue.slice(0, 5);
+  const readDone = readings.filter(r => r.is_read).length;
+  const readTotal = readings.length;
+  const readPct = readTotal ? Math.round(readDone / readTotal * 100) : 0;
 
-  // Reading estimate
-  const mins = unread.length * 20;
-  const perDay = Math.ceil(mins / 7);
-  document.getElementById('todayReadEst').innerHTML = `
-    <div style="font-size:13px;color:var(--text2);margin-bottom:8px"><strong style="color:var(--text)">${unread.length}</strong> unread readings remaining</div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:8px">~<strong style="color:var(--text)">${mins} min</strong> total estimated reading time (20 min/reading avg)</div>
-    <div style="font-size:13px;color:var(--text2)">To finish by semester end: ~<strong style="color:var(--garnet)">${perDay} min/day</strong></div>
-  `;
+  document.getElementById('todayReadProgress').textContent = `${readDone} / ${readTotal} complete`;
+
+  let qHtml = '';
+  if (!queue.length) {
+    qHtml = '<div style="padding:14px 18px;font-size:13px;color:var(--teal)"><i class="ti ti-check"></i> All readings complete!</div>';
+  }
+  queue.forEach(r => {
+    const c = courseById(r.course_id);
+    const daysStr = r._inferredDue < new Date('2098-01-01') ? (() => {
+      const d = Math.ceil((r._inferredDue - now) / 86400000);
+      return d < 0 ? `<span style="color:var(--pink);font-size:10px">overdue</span>` :
+             d === 0 ? `<span style="color:#FFB830;font-size:10px">today</span>` :
+             `<span style="font-size:10px;color:var(--text3)">${d}d</span>`;
+    })() : '';
+    qHtml += `<div class="reading-row" style="padding:10px 18px;cursor:pointer" onclick="toggleReadingById('${r.id}')">
+      <div class="check-circle ${r.code ? 'cc-' + r.code : ''}" style="flex-shrink:0;margin-top:1px"></div>
+      <div class="reading-text" style="flex:1">
+        <div class="reading-title" style="font-size:13px">${r.title}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+          ${courseTag(c)}
+          ${r.week_label ? `<span style="font-size:10px;color:var(--text3)">${r.week_label}</span>` : ''}
+          ${daysStr}
+        </div>
+      </div>
+      <i class="ti ti-circle-check" style="font-size:18px;color:var(--text3);flex-shrink:0"></i>
+    </div>`;
+  });
+  if (unread.length > 5) {
+    qHtml += `<div style="padding:8px 18px;font-size:11px;color:var(--text3);text-align:center">+${unread.length - 5} more · <a href="#" onclick="nav('readings');return false" style="color:var(--pink)">view all</a></div>`;
+  }
+  document.getElementById('todayReadQueue').innerHTML = qHtml;
+
+  // reading progress bar
+  document.getElementById('todayReadBar').innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+      <span style="font-size:11px;color:var(--text3)">Reading progress</span>
+      <span style="font-size:11px;color:var(--text3)">${readPct}%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${readPct}%"></div></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px">~${unread.length * 20} min remaining · ${Math.ceil(unread.length * 20 / Math.max(1, daysLeft))} min/day to finish</div>`;
+
+  // ── DAILY REFLECTION PROMPT ──
+  const savedPromptIdx = parseInt(localStorage.getItem('todayPromptIdx') || '0');
+  document.getElementById('todayPrompt').textContent = '"' + REFLECTION_PROMPTS[savedPromptIdx % REFLECTION_PROMPTS.length] + '"';
+
+  // Restore any saved draft
+  const draft = localStorage.getItem('todayReflectionDraft');
+  if (draft) document.getElementById('todayReflectionText').value = draft;
+  document.getElementById('todayReflectionText').oninput = () => {
+    localStorage.setItem('todayReflectionDraft', document.getElementById('todayReflectionText').value);
+  };
+}
+
+async function toggleReadingById(id) {
+  const r = readings.find(x => x.id === id);
+  if (!r) return;
+  r.is_read = !r.is_read;
+  await sbPatch('readings', id, { is_read: r.is_read });
+  renderToday();
+}
+
+function newTodayPrompt() {
+  const cur = parseInt(localStorage.getItem('todayPromptIdx') || '0');
+  const next = (cur + 1) % REFLECTION_PROMPTS.length;
+  localStorage.setItem('todayPromptIdx', next);
+  document.getElementById('todayPrompt').textContent = '"' + REFLECTION_PROMPTS[next] + '"';
+}
+
+async function saveTodayReflection() {
+  const text = document.getElementById('todayReflectionText').value.trim();
+  if (!text) { showToast('Nothing to save'); return; }
+  const promptIdx = parseInt(localStorage.getItem('todayPromptIdx') || '0');
+  const prompt = REFLECTION_PROMPTS[promptIdx % REFLECTION_PROMPTS.length];
+  const now = new Date();
+  const data = {
+    title: 'Reflection — ' + now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    body: prompt + '\n\n' + text,
+    tags: 'reflection,daily',
+    updated_at: now.toISOString()
+  };
+  const r = await sb('POST', 'notes', data);
+  notes.push(r[0]);
+  document.getElementById('todayReflectionText').value = '';
+  localStorage.removeItem('todayReflectionDraft');
+  showToast('Saved to Notes!');
 }
 
 // ── DASHBOARD ────────────────────────────────────
@@ -1243,13 +1515,15 @@ function renderDashboard() {
   let dlHtml = upcoming.map(a => {
     const c = courseById(a.course_id);
     const dot = urgencyDot(a.due_date);
-    return `<div class="deadline-item"><div class="dl-dot ${dot}"></div><span class="dl-name">${a.name}</span>${courseTag(c)}<span class="dl-meta">${fmtDate(a.due_date)}</span></div>`;
+    const dotColor = c.color === 'gold' ? '#60b0ff' : c.color === 'blue' ? 'var(--teal)' : 'var(--pink)';
+    return `<div class="deadline-item"><div class="dl-dot"></div><span class="dl-name">${a.name}</span>${courseTag(c)}<span class="dl-meta">${fmtDate(a.due_date)}</span></div>`.replace('class="dl-dot"', `class="dl-dot" style="background:${dotColor}"`);
   }).join('') || '<p style="color:var(--text3);font-size:13px;padding:8px 0">No upcoming deadlines</p>';
   document.getElementById('upcomingDeadlines').innerHTML = dlHtml;
 
   // Connections
   const conns = [
     { title:'Shared Research Proposal', courses:['EDF 5492','EDG 6362'], desc:'The capstone proposal counts for both courses — coordinate your effort.' },
+    { title:'Conceptual & Theoretical Frameworks', courses:['EDG 6362','EDF 5492'], desc:'EDG 6362 Week 3 builds the framework lens you\'ll apply directly in your EDF 5492 proposal.' },
     { title:'Research Ethics (IRB / CITI)', courses:['EDF 5492','EME 6920'], desc:'Ethics module in EDF 5492 aligns with CITI Training in EME 6920.' },
     { title:'APA Writing Standard', courses:['EDF 5492','EDG 6362'], desc:'Both courses require APA 7th edition throughout all written work.' },
     { title:'Citation Management', courses:['EME 6920','EDF 5492'], desc:'Zotero setup (EME 6920 Unit 1) feeds directly into your literature review.' },
@@ -1257,7 +1531,7 @@ function renderDashboard() {
   document.getElementById('connectionsShort').innerHTML = conns.map(c => `
     <div class="conn-card">
       <div class="conn-title"><i class="ti ti-link"></i>${c.title}</div>
-      <div class="conn-courses">${c.courses.map(x => `<span class="tag tag-garnet">${x}</span>`).join('')}</div>
+      <div class="conn-courses">${c.courses.map(x => x==='EDF 5492' ? `<span class="tag tag-garnet">${x}</span>` : x==='EDG 6362' ? `<span class="tag tag-gold">${x}</span>` : `<span class="tag tag-blue">${x}</span>`).join('')}</div>
       <div class="conn-desc">${c.desc}</div>
     </div>
   `).join('');
@@ -1378,6 +1652,33 @@ async function saveAssignment() {
 }
 
 // ── READINGS ─────────────────────────────────────
+// Infer a due date for a group of readings based on course + week label
+// Looks for assignments in the same course whose name contains the week/module number,
+// then returns the latest due date among them.
+function inferReadingDueDate(courseId, weekLabel) {
+  if (!weekLabel) return null;
+  // Extract number from label: "Week 3", "Module 2", "Week 3 · Core" → 3, 2, 3
+  const numMatch = weekLabel.match(/(\d+)/);
+  if (!numMatch) return null;
+  const num = parseInt(numMatch[1]);
+
+  const courseAssignments = assignments.filter(a => a.course_id === courseId && a.due_date);
+  const c = courseById(courseId);
+  const isWeekBased = c.code && c.code.startsWith('EDG');
+
+  // For EDG (week-based): match assignments whose name contains "Week N" or "Week N Discussion"
+  // For EDF (module-based): match assignments whose name contains "Module N"
+  const keyword = isWeekBased ? `Week ${num}` : `Module ${num}`;
+
+  const matches = courseAssignments.filter(a =>
+    a.name.toLowerCase().includes(keyword.toLowerCase())
+  );
+
+  if (!matches.length) return null;
+  // Return the latest (last) due date among matched assignments
+  return matches.sort((a, b) => new Date(b.due_date) - new Date(a.due_date))[0].due_date;
+}
+
 function renderReadings() {
   const done = readings.filter(r => r.is_read).length;
   document.getElementById('readProgress').textContent = `${done} / ${readings.length} readings complete`;
@@ -1404,30 +1705,104 @@ function renderReadings() {
     grouped[key][wk].push(r);
   });
 
-  let html = '';
-  Object.entries(grouped).forEach(([code, weeks]) => {
-    html += `<div style="margin-bottom:20px"><div class="section-title" style="margin-bottom:8px"><i class="ti ti-books"></i>${code}</div>`;
+  // Filter out completed from the active list (already grouped above, now rebuild without them)
+  // Re-filter active readings for the grouped display
+  const activeList = list.filter(r => !r.is_read);
+  const completedList = list.filter(r => r.is_read);
+
+  // Rebuild grouped from active only
+  const activeGrouped = {};
+  activeList.forEach(r => {
+    const c = courseById(r.course_id);
+    const key = c.code || 'Unknown';
+    if (!activeGrouped[key]) activeGrouped[key] = {};
+    const wk = r.week_label || 'General';
+    if (!activeGrouped[key][wk]) activeGrouped[key][wk] = [];
+    activeGrouped[key][wk].push(r);
+  });
+
+  let activeHtml = '';
+  Object.entries(activeGrouped).forEach(([code, weeks]) => {
+    const courseObj = courses.find(c => c.code === code);
+    activeHtml += `<div style="margin-bottom:20px"><div class="section-title" style="margin-bottom:8px"><i class="ti ti-books"></i>${code}</div>`;
     Object.entries(weeks).forEach(([wk, rs]) => {
-      html += `<div style="font-size:12px;font-weight:600;color:var(--text3);margin:8px 0 4px">${wk}</div>`;
+      const dueDate = courseObj ? inferReadingDueDate(courseObj.id, wk) : null;
+      const days = dueDate ? daysUntil(dueDate) : null;
+      const dueDot = days === null ? '' : days < 0 ? 'overdue' : days <= 3 ? 'soon' : 'ok';
+      const dueColor = dueDot === 'overdue' ? '#ef4444' : dueDot === 'soon' ? '#f59e0b' : 'var(--text3)';
+      const dueBadge = dueDate
+        ? `<span style="font-size:11px;font-weight:600;color:${dueColor};margin-left:8px"><i class="ti ti-calendar-due" style="font-size:11px;vertical-align:middle"></i> Due ${fmtDate(dueDate)}${days !== null && days >= 0 && days <= 7 ? ` · ${days === 0 ? 'today' : days + 'd'}` : ''}</span>`
+        : '';
+      activeHtml += `<div style="font-size:12px;font-weight:600;color:var(--text3);margin:8px 0 4px;display:flex;align-items:center">${wk}${dueBadge}</div>`;
       rs.forEach(r => {
         const rCourse = courseById(r.course_id);
-        const rCheckClass = rCourse.color === 'gold' ? 'cc-gold' : rCourse.color === 'blue' ? 'cc-blue' : 'cc-garnet';
-        html += `<div class="reading-row">
-          <div class="check-circle ${r.is_read ? 'done ' + rCheckClass : ''}" onclick="toggleReading('${r.id}')" style="margin-top:2px"></div>
+        const rCheckClass = rCourse.code && rCourse.code.startsWith('EDG') ? 'cc-gold' : rCourse.code && rCourse.code.startsWith('EME') ? 'cc-blue' : 'cc-garnet';
+        activeHtml += `<div class="reading-row">
+          <div class="check-circle ${rCheckClass}" onclick="toggleReading('${r.id}')" style="margin-top:2px"></div>
           <div class="reading-text">
-            <div class="reading-title ${r.is_read ? 'completed-row' : ''}">${r.title}${r.url ? ` <a href="${r.url}" target="_blank" style="font-size:11px;color:var(--garnet);margin-left:6px"><i class="ti ti-external-link"></i></a>` : ''}</div>
+            <div class="reading-title">${r.title}${r.url ? ` <a href="${r.url}" target="_blank" style="font-size:11px;color:var(--garnet);margin-left:6px"><i class="ti ti-external-link"></i></a>` : ''}</div>
             ${r.citation ? `<div class="reading-citation">${r.citation}</div>` : ''}
           </div>
           <button class="btn btn-secondary btn-sm btn-icon" onclick="editReading('${r.id}')"><i class="ti ti-pencil"></i></button>
         </div>`;
       });
     });
-    html += '</div>';
+    activeHtml += '</div>';
   });
-  document.getElementById('readingList').innerHTML = html || '<p style="color:var(--text3)">No readings found.</p>';
+
+  // Completed section
+  let completedHtml = '';
+  if (completedList.length) {
+    const cGrouped = {};
+    completedList.forEach(r => {
+      const c = courseById(r.course_id);
+      const key = c.code || 'Unknown';
+      if (!cGrouped[key]) cGrouped[key] = [];
+      cGrouped[key].push(r);
+    });
+
+    let cRows = '';
+    Object.entries(cGrouped).forEach(([code, rs]) => {
+      cRows += `<div style="margin-bottom:14px"><div class="section-title" style="margin-bottom:6px;opacity:.6"><i class="ti ti-books"></i>${code}</div>`;
+      rs.forEach(r => {
+        const rCourse = courseById(r.course_id);
+        const rCheckClass = rCourse.code && rCourse.code.startsWith('EDG') ? 'cc-gold' : rCourse.code && rCourse.code.startsWith('EME') ? 'cc-blue' : 'cc-garnet';
+        cRows += `<div class="reading-row" style="opacity:.55">
+          <div class="check-circle done ${rCheckClass}" onclick="toggleReading('${r.id}')" style="margin-top:2px"></div>
+          <div class="reading-text">
+            <div class="reading-title" style="text-decoration:line-through">${r.title}</div>
+            ${r.week_label ? `<div class="reading-citation">${r.week_label}</div>` : ''}
+          </div>
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="editReading('${r.id}')"><i class="ti ti-pencil"></i></button>
+        </div>`;
+      });
+      cRows += '</div>';
+    });
+
+    completedHtml = `
+      <div style="margin-top:28px;border-top:2px solid var(--border);padding-top:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;cursor:pointer" onclick="toggleReadingCompleted()">
+          <div class="section-title" style="margin-bottom:0"><i class="ti ti-circle-check"></i> Completed</div>
+          <span class="tag tag-gray" style="font-size:11px">${completedList.length} read</span>
+          <i class="ti ti-chevron-down" id="readCompletedChevron" style="font-size:16px;color:var(--text3);margin-left:auto;transition:transform .2s"></i>
+        </div>
+        <div id="readCompletedWrap">${cRows}</div>
+      </div>`;
+  }
+
+  document.getElementById('readingList').innerHTML =
+    (activeHtml || '<p style="color:var(--text3)">No unread readings — nice work!</p>') + completedHtml;
 }
 
-function setReadFilter(f) { currentReadFilter = f === 'All' ? 'all' : f; renderReadings(); }
+let _readCompletedVisible = true;
+function toggleReadingCompleted() {
+  _readCompletedVisible = !_readCompletedVisible;
+  const wrap = document.getElementById("readCompletedWrap");
+  const chevron = document.getElementById("readCompletedChevron");
+  if (wrap) wrap.style.display = _readCompletedVisible ? "block" : "none";
+  if (chevron) chevron.style.transform = _readCompletedVisible ? "" : "rotate(-90deg)";
+}
+function setReadFilter(f) { currentReadFilter = f === "All" ? "all" : f; renderReadings(); }
 
 async function toggleReading(id) {
   const r = readings.find(x => x.id === id);
@@ -1643,7 +2018,7 @@ function renderNotes() {
     const c = n.course_id ? courseById(n.course_id) : null;
     const tags = n.tags ? n.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
     const dt = new Date(n.updated_at || n.created_at);
-    const noteColorClass = c && c.color === 'gold' ? 'note-gold' : c && c.color === 'blue' ? 'note-blue' : c ? 'note-garnet' : '';
+    const noteColorClass = c && c.code && c.code.startsWith('EDG') ? 'note-gold' : c && c.code && c.code.startsWith('EME') ? 'note-blue' : c ? 'note-garnet' : '';
     return `<div class="note-card ${noteColorClass}" onclick="editNote('${n.id}')">
       <div class="note-title">${n.title || 'Untitled'}</div>
       <div class="note-body">${n.body}</div>
@@ -1881,7 +2256,7 @@ function renderExport() {
     const cA = assignments.filter(a => a.course_id === c.id);
     const cDone = cA.filter(a => a.completed).length;
     return `<div style="margin-bottom:20px">
-      <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--garnet)">${c.code} — ${c.name}</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:#FF2D78">${c.code} — ${c.name}</div>
       <table class="tbl">
         <thead><tr><th>Assignment</th><th>Due</th><th>Status</th></tr></thead>
         <tbody>
@@ -1900,9 +2275,9 @@ function downloadExportPDF() {
   const { jsPDF } = window.jspdf;
   if (!jsPDF) { showToast('PDF library not loaded yet — try again in a moment'); return; }
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const GARNET = [139, 26, 46];
-  const GOLD   = [196, 138, 0];
-  const BLUE   = [30, 98, 194];
+  const GARNET = [255, 45, 120];
+  const GOLD   = [255, 184, 48];
+  const BLUE   = [0, 201, 167];
   const DARK   = [30, 28, 24];
   const GRAY   = [110, 108, 101];
   const LGRAY  = [220, 218, 214];
@@ -1923,10 +2298,10 @@ function downloadExportPDF() {
   doc.setFont('helvetica', 'bold'); doc.setFontSize(20);
   doc.text('FSU Ed.D. Dashboard', margin, 14);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-  doc.setTextColor(230, 210, 170);
+  doc.setTextColor(255, 240, 200);
   const curSem = semesters.find(s => s.is_current) || semesters[0] || {};
   doc.text((curSem.name || 'Semester') + '  ·  Progress Report', margin, 23);
-  doc.setTextColor(200, 175, 130);
+  doc.setTextColor(255, 220, 180);
   doc.text('Generated ' + new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }), pageW - margin, 23, { align: 'right' });
   y = 38;
 
@@ -2141,7 +2516,7 @@ function downloadExportPDF() {
     doc.rect(0, 287, pageW, 10, 'F');
     doc.setFillColor(...GOLD);
     doc.rect(0, 287, pageW, 1.2, 'F');
-    doc.setTextColor(210, 185, 140); doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
+    doc.setTextColor(255, 220, 180); doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
     doc.text('FSU Learning Design & Performance Technology  ·  Ed.D. Dashboard', margin, 293);
     doc.text('Page ' + p + ' of ' + totalPages, pageW - margin, 293, { align: 'right' });
   }
@@ -2332,6 +2707,40 @@ async function syncMissingReadings() {
   }
   renderReadings();
   showToast(added > 0 ? `Added ${added} new reading${added > 1 ? 's' : ''}!` : 'All readings already up to date.');
+}
+
+// ── SYNC MISSING ASSIGNMENTS ────────────────────
+async function syncMissingAssignments() {
+  showToast("Checking for missing assignments…");
+  let added = 0;
+  for (const a of SEED.assignments) {
+    const c = courses.find(x => x.code === a.course_code);
+    if (!c) continue;
+    const { course_code, ...rest } = a;
+    const exists = assignments.some(x => x.course_id === c.id && x.name === a.name);
+    if (!exists) {
+      const result = await sb("POST", "assignments", { ...rest, course_id: c.id, completed: false });
+      assignments.push(result[0]);
+      added++;
+    }
+  }
+  if (currentPage === "assignments") renderAssignments();
+  if (currentPage === "today") renderToday();
+  if (currentPage === "dashboard") renderDashboard();
+  showToast(added > 0 ? "Added " + added + " new assignment" + (added > 1 ? "s" : "") + "!" : "All assignments already up to date.");
+}
+
+
+// ── SYNC COURSE COLORS ───────────────────────────────
+async function syncCourseColors() {
+  const colorMap = { 'EDF 5492': 'garnet', 'EDG 6362': 'gold', 'EME 6920': 'blue' };
+  for (const c of courses) {
+    const expected = colorMap[c.code];
+    if (expected && c.color !== expected) {
+      await sbPatch('courses', c.id, { color: expected });
+      c.color = expected;
+    }
+  }
 }
 
 // ── STARTUP ──────────────────────────────────────
